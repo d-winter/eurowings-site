@@ -1,5 +1,6 @@
 const HYGRAPH_ENDPOINT = process.env.HYGRAPH_ENDPOINT || "";
-const HYGRAPH_TOKEN = process.env.HYGRAPH_TOKEN || "";
+const PRODUCTION_TOKEN = process.env.HYGRAPH_PRODUCTION_TOKEN || "";
+const PREVIEW_TOKEN = process.env.HYGRAPH_PREVIEW_TOKEN || "";
 
 export async function hygraphFetch<T>(
   query: string,
@@ -11,12 +12,14 @@ export async function hygraphFetch<T>(
     return {} as T;
   }
 
+  const token = isDraft ? PREVIEW_TOKEN : PRODUCTION_TOKEN;
+
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
 
-  if (HYGRAPH_TOKEN) {
-    headers["Authorization"] = `Bearer ${HYGRAPH_TOKEN}`;
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const res = await fetch(HYGRAPH_ENDPOINT, {
