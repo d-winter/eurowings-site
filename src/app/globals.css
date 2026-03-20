@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+@layer base {
+  body {
+    @apply text-ew-dark antialiased;
+  }
+}
+
+@layer components {
+  .prose-ew h2 {
+    @apply text-2xl font-bold mb-4 mt-8 text-ew-dark;
+  }
+  .prose-ew h3 {
+    @apply text-xl font-semibold mb-3 mt-6 text-ew-dark;
+  }
+  .prose-ew p {
+    @apply mb-4 leading-relaxed text-ew-grey;
+  }
+  .prose-ew ul {
+    @apply list-disc pl-6 mb-4 space-y-1 text-ew-grey;
+  }
+  .prose-ew ol {
+    @apply list-decimal pl-6 mb-4 space-y-1 text-ew-grey;
+  }
+  .prose-ew a {
+    @apply text-ew-primary hover:text-ew-primary-dark underline;
+  }
+  .prose-ew strong {
+    @apply font-semibold text-ew-dark;
+  }
+}
