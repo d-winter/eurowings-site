@@ -4,9 +4,15 @@ import type { Promotion } from "@/lib/types";
 import { formatPrice } from "@/lib/types";
 
 function CardInner({ promo }: { promo: Promotion }) {
+  const eid = promo.id;
+
   return (
     <>
-      <div className="relative h-48 overflow-hidden bg-ew-light">
+      <div
+        className="relative h-48 overflow-hidden bg-ew-light"
+        data-hygraph-entry-id={eid}
+        data-hygraph-field-api-id="image"
+      >
         {promo.image?.url ? (
           <Image
             src={promo.image.url}
@@ -22,23 +28,39 @@ function CardInner({ promo }: { promo: Promotion }) {
           </div>
         )}
         {promo.priceFrom != null && (
-          <div className="absolute bottom-3 right-3 rounded-full bg-ew-accent px-3 py-1 text-sm font-bold text-ew-dark shadow">
+          <div
+            className="absolute bottom-3 right-3 rounded-full bg-ew-accent px-3 py-1 text-sm font-bold text-ew-dark shadow"
+            data-hygraph-entry-id={eid}
+            data-hygraph-field-api-id="priceFrom"
+          >
             from {formatPrice(promo.priceFrom, promo.currency)}
           </div>
         )}
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-lg font-bold text-ew-dark group-hover:text-ew-primary">
+        <h3
+          className="text-lg font-bold text-ew-dark group-hover:text-ew-primary"
+          data-hygraph-entry-id={eid}
+          data-hygraph-field-api-id="heading"
+        >
           {promo.heading}
         </h3>
         {promo.description && (
-          <p className="mt-2 flex-1 text-sm leading-relaxed text-ew-grey">
+          <p
+            className="mt-2 flex-1 text-sm leading-relaxed text-ew-grey"
+            data-hygraph-entry-id={eid}
+            data-hygraph-field-api-id="description"
+          >
             {promo.description}
           </p>
         )}
         {promo.linkLabel && (
-          <span className="mt-4 text-sm font-semibold text-ew-primary">
+          <span
+            className="mt-4 text-sm font-semibold text-ew-primary"
+            data-hygraph-entry-id={eid}
+            data-hygraph-field-api-id="linkLabel"
+          >
             {promo.linkLabel} &rarr;
           </span>
         )}

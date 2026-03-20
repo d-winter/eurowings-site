@@ -11,12 +11,16 @@ export default function HighlightCard({
 }: {
   highlight: Highlight;
 }) {
-  const iconPath =
-    ICON_MAP[highlight.icon || ""] || ICON_MAP.price;
+  const eid = highlight.id;
+  const iconPath = ICON_MAP[highlight.icon || ""] || ICON_MAP.price;
 
   return (
     <div className="flex flex-col items-center rounded-2xl bg-white p-6 text-center shadow-sm">
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-ew-primary/10">
+      <div
+        className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-ew-primary/10"
+        data-hygraph-entry-id={eid}
+        data-hygraph-field-api-id="icon"
+      >
         <svg
           className="h-7 w-7 text-ew-primary"
           fill="none"
@@ -31,11 +35,19 @@ export default function HighlightCard({
           />
         </svg>
       </div>
-      <h3 className="text-base font-bold text-ew-dark">
+      <h3
+        className="text-base font-bold text-ew-dark"
+        data-hygraph-entry-id={eid}
+        data-hygraph-field-api-id="heading"
+      >
         {highlight.heading}
       </h3>
       {highlight.description && (
-        <p className="mt-2 text-sm leading-relaxed text-ew-grey">
+        <p
+          className="mt-2 text-sm leading-relaxed text-ew-grey"
+          data-hygraph-entry-id={eid}
+          data-hygraph-field-api-id="description"
+        >
           {highlight.description}
         </p>
       )}

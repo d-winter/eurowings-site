@@ -53,9 +53,7 @@ export default async function HomePage() {
 
       {page?.promoCards && page.promoCards.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h2 className="mb-8 text-3xl font-bold text-ew-dark">
-            Current Deals
-          </h2>
+          <h2 className="mb-8 text-3xl font-bold text-ew-dark">Current Deals</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {page.promoCards.map((promo) => (
               <PromoCard key={promo.id} promo={promo} />
@@ -67,9 +65,7 @@ export default async function HomePage() {
       {page?.featuredDestinations && page.featuredDestinations.length > 0 && (
         <section className="bg-white py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className="mb-8 text-3xl font-bold text-ew-dark">
-              Popular Destinations
-            </h2>
+            <h2 className="mb-8 text-3xl font-bold text-ew-dark">Popular Destinations</h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {page.featuredDestinations.map((dest) => (
                 <DestinationCard key={dest.id} destination={dest} />
@@ -83,7 +79,7 @@ export default async function HomePage() {
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="space-y-6">
             {page.contentSections.map((section, idx) => (
-              <ContentSection key={idx} section={section} />
+              <ContentSection key={section.id || idx} section={section} entryId={page.id} />
             ))}
           </div>
         </section>
@@ -92,9 +88,7 @@ export default async function HomePage() {
       {!page && (
         <>
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <h2 className="mb-8 text-3xl font-bold text-ew-dark">
-              Why Fly with Eurowings?
-            </h2>
+            <h2 className="mb-8 text-3xl font-bold text-ew-dark">Why Fly with Eurowings?</h2>
             <div className="grid gap-6 sm:grid-cols-3">
               {[
                 { title: "Low Prices", desc: "Affordable fares starting from \u20ac29.99 across Europe and beyond." },
@@ -113,12 +107,9 @@ export default async function HomePage() {
               ))}
             </div>
           </section>
-
           <section className="bg-white py-16">
             <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-ew-dark">
-                Ready to Explore?
-              </h2>
+              <h2 className="text-3xl font-bold text-ew-dark">Ready to Explore?</h2>
               <p className="mx-auto mt-4 max-w-xl text-ew-grey">
                 Connect your Hygraph CMS to see live content. Set the
                 HYGRAPH_ENDPOINT environment variable to get started.
@@ -135,7 +126,12 @@ export default async function HomePage() {
               <div key={note.id} className="flex gap-1">
                 {note.identifier && <sup>{note.identifier}</sup>}
                 {note.content?.html && (
-                  <div dangerouslySetInnerHTML={{ __html: note.content.html }} />
+                  <div
+                    dangerouslySetInnerHTML={{ __html: note.content.html }}
+                    data-hygraph-entry-id={note.id}
+                    data-hygraph-field-api-id="content"
+                    data-hygraph-rich-text-format="html"
+                  />
                 )}
               </div>
             ))}

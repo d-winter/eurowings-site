@@ -1,10 +1,12 @@
 export const GET_HOMEPAGE = `
   query GetHomepage($stage: Stage! = PUBLISHED) {
     homepages(first: 1, stage: $stage) {
+      id
       title
       slug
       seo { metaTitle metaDescription ogImage noIndex }
       heroBanner {
+        id
         heading
         subheading
         backgroundImage { url }
@@ -14,12 +16,12 @@ export const GET_HOMEPAGE = `
         id heading description priceFrom currency linkUrl linkLabel
         image { url }
       }
-      contentSections { heading body { html } imageUrl }
+      contentSections { id heading body { html } imageUrl }
       legalNotes { id title identifier content { html } }
       featuredDestinations {
         id title slug startingPrice currency
         coverImage { url }
-        airport { name iataCode }
+        airport { id name iataCode }
       }
     }
   }
@@ -28,6 +30,7 @@ export const GET_HOMEPAGE = `
 export const GET_DESTINATION_PAGE = `
   query GetDestinationPage($slug: String!, $stage: Stage! = PUBLISHED) {
     destinationPage(where: { slug: $slug }, stage: $stage) {
+      id
       title
       slug
       description { html }
@@ -35,9 +38,9 @@ export const GET_DESTINATION_PAGE = `
       currency
       seo { metaTitle metaDescription ogImage noIndex }
       coverImage { url }
-      airport { name iataCode city country countryCode }
+      airport { id name iataCode city country countryCode }
       highlights { id heading icon description }
-      contentSections { heading body { html } imageUrl }
+      contentSections { id heading body { html } imageUrl }
       flightOffers {
         id title originAirport destinationAirport
         priceFrom travelDate currency linkUrl
@@ -46,7 +49,7 @@ export const GET_DESTINATION_PAGE = `
       relatedDestinations {
         id title slug startingPrice currency
         coverImage { url }
-        airport { name iataCode }
+        airport { id name iataCode }
       }
     }
   }
@@ -65,7 +68,7 @@ export const GET_ALL_DESTINATIONS = `
     destinationPages(stage: $stage, first: 50) {
       id title slug startingPrice currency
       coverImage { url }
-      airport { name iataCode city country }
+      airport { id name iataCode city country }
     }
   }
 `;
@@ -73,7 +76,7 @@ export const GET_ALL_DESTINATIONS = `
 export const GET_FAQ_PAGE = `
   query GetFaqPage($stage: Stage! = PUBLISHED) {
     faqPages(first: 1, stage: $stage) {
-      title description
+      id title description
       seo { metaTitle metaDescription }
     }
     faqCategories(stage: $stage) {
@@ -88,16 +91,18 @@ export const GET_FAQ_PAGE = `
 export const GET_LANDING_PAGE = `
   query GetLandingPage($slug: String!, $stage: Stage! = PUBLISHED) {
     landingPage(where: { slug: $slug }, stage: $stage) {
+      id
       title
       slug
       seo { metaTitle metaDescription ogImage noIndex }
       heroBanner {
+        id
         heading
         subheading
         backgroundImage { url }
         cta { id label url variant openInNewTab }
       }
-      contentSections { heading body { html } imageUrl }
+      contentSections { id heading body { html } imageUrl }
       contentBlocks {
         ... on Promotion {
           __typename id heading description priceFrom currency linkUrl linkLabel
@@ -113,7 +118,7 @@ export const GET_LANDING_PAGE = `
         ... on DestinationPage {
           __typename id destTitle: title slug startingPrice currency
           coverImage { url }
-          airport { name iataCode }
+          airport { id name iataCode }
         }
       }
       legalNotes { id title identifier content { html } }

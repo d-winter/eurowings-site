@@ -59,6 +59,7 @@ export interface Disclaimer {
 }
 
 export interface ContentSectionData {
+  id?: string;
   heading?: string;
   body?: { html: string };
   imageUrl?: string;
@@ -99,6 +100,7 @@ export interface DestinationPage {
 }
 
 export interface Homepage {
+  id: string;
   title: string;
   slug?: string;
   seo?: SeoMetadata;
@@ -126,6 +128,7 @@ export interface FaqCategory {
 }
 
 export interface FaqPageData {
+  id: string;
   title: string;
   description?: string;
   seo?: SeoMetadata;
@@ -138,6 +141,7 @@ export type ContentBlock =
   | (DestinationPage & { __typename: "DestinationPage" });
 
 export interface LandingPage {
+  id: string;
   title: string;
   slug: string;
   seo?: SeoMetadata;

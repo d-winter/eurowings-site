@@ -30,9 +30,21 @@ export default function FaqAccordion({
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-ew-dark">{cat.title}</h2>
+              <h2
+                className="text-xl font-bold text-ew-dark"
+                data-hygraph-entry-id={cat.id}
+                data-hygraph-field-api-id="title"
+              >
+                {cat.title}
+              </h2>
               {cat.description && (
-                <p className="text-sm text-ew-grey">{cat.description}</p>
+                <p
+                  className="text-sm text-ew-grey"
+                  data-hygraph-entry-id={cat.id}
+                  data-hygraph-field-api-id="description"
+                >
+                  {cat.description}
+                </p>
               )}
             </div>
           </div>
@@ -49,7 +61,11 @@ export default function FaqAccordion({
                     onClick={() => toggle(item.id)}
                     className="flex w-full items-center justify-between px-5 py-4 text-left"
                   >
-                    <span className="pr-4 font-medium text-ew-dark">
+                    <span
+                      className="pr-4 font-medium text-ew-dark"
+                      data-hygraph-entry-id={item.id}
+                      data-hygraph-field-api-id="question"
+                    >
                       {item.question}
                     </span>
                     <svg
@@ -76,9 +92,10 @@ export default function FaqAccordion({
                     {item.answer?.html && (
                       <div
                         className="prose-ew px-5"
-                        dangerouslySetInnerHTML={{
-                          __html: item.answer.html,
-                        }}
+                        dangerouslySetInnerHTML={{ __html: item.answer.html }}
+                        data-hygraph-entry-id={item.id}
+                        data-hygraph-field-api-id="answer"
+                        data-hygraph-rich-text-format="html"
                       />
                     )}
                   </div>

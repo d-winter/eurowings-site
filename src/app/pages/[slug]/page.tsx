@@ -32,9 +32,9 @@ async function getPage(slug: string, isDraft: boolean) {
 
 export async function generateStaticParams() {
   try {
-    const data = await hygraphFetch<{
-      landingPages: { slug: string }[];
-    }>(GET_ALL_LANDING_PAGE_SLUGS);
+    const data = await hygraphFetch<{ landingPages: { slug: string }[] }>(
+      GET_ALL_LANDING_PAGE_SLUGS
+    );
     return (data.landingPages || []).map((p) => ({ slug: p.slug }));
   } catch {
     return [];
@@ -84,6 +84,8 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
               ? "bg-ew-accent text-ew-dark hover:bg-amber-400"
               : "border-2 border-ew-primary text-ew-primary hover:bg-ew-primary hover:text-white"
           }`}
+          data-hygraph-entry-id={block.id}
+          data-hygraph-field-api-id="label"
         >
           {block.label}
         </Link>
@@ -119,7 +121,7 @@ export default async function LandingPageRoute({ params }: Props) {
         {page.contentSections && page.contentSections.length > 0 && (
           <section className="mb-12 space-y-6">
             {page.contentSections.map((section, idx) => (
-              <ContentSection key={idx} section={section} />
+              <ContentSection key={section.id || idx} section={section} entryId={page.id} />
             ))}
           </section>
         )}
@@ -130,7 +132,12 @@ export default async function LandingPageRoute({ params }: Props) {
               <div key={note.id} className="flex gap-1">
                 {note.identifier && <sup>{note.identifier}</sup>}
                 {note.content?.html && (
-                  <div dangerouslySetInnerHTML={{ __html: note.content.html }} />
+                  <div
+                    dangerouslySetInnerHTML={{ __html: note.content.html }}
+                    data-hygraph-entry-id={note.id}
+                    data-hygraph-field-api-id="content"
+                    data-hygraph-rich-text-format="html"
+                  />
                 )}
               </div>
             ))}
