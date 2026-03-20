@@ -1,3 +1,4 @@
+import { draftMode } from "next/headers";
 import { hygraphFetch } from "@/lib/hygraph";
 import { GET_HOMEPAGE } from "@/lib/queries";
 import type { Homepage } from "@/lib/types";
@@ -5,10 +6,16 @@ import HeroBanner from "@/components/HeroBanner";
 import PromoCard from "@/components/PromoCard";
 import DestinationCard from "@/components/DestinationCard";
 import ContentSection from "@/components/ContentSection";
+import PreviewBanner from "@/components/PreviewBanner";
 
-async function getHomepage() {
+async function getHomepage(isDraft: boolean) {
   try {
-    const data = await hygraphFetch<{ homepages: Homepage[] }>(GET_HOMEPAGE);
+    const stage = isDraft ? "DRAFT" : "PUBLISHED";
+    const data = await hygraphFetch<{ homepages: Homepage[] }>(
+      GET_HOMEPAGE,
+      { stage },
+      isDraft
+    );
     return data.homepages?.[0] || null;
   } catch {
     return null;
@@ -16,11 +23,13 @@ async function getHomepage() {
 }
 
 export default async function HomePage() {
-  const page = await getHomepage();
+  const { isEnabled: isDraft } = draftMode();
+  const page = await getHomepage(isDraft);
 
   return (
     <>
-      {/* Hero */}
+      {isDraft && <PreviewBanner />}
+
       {page?.heroBanner ? (
         <HeroBanner hero={page.heroBanner} />
       ) : (
@@ -42,7 +51,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Promo Cards */}
       {page?.promoCards && page.promoCards.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <h2 className="mb-8 text-3xl font-bold text-ew-dark">
@@ -56,7 +64,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Featured Destinations */}
       {page?.featuredDestinations && page.featuredDestinations.length > 0 && (
         <section className="bg-white py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -72,7 +79,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Content Sections */}
       {page?.contentSections && page.contentSections.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="space-y-6">
@@ -83,7 +89,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Fallback content when no CMS data */}
       {!page && (
         <>
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -123,7 +128,6 @@ export default async function HomePage() {
         </>
       )}
 
-      {/* Legal Notes */}
       {page?.legalNotes && page.legalNotes.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
           <div className="space-y-2 text-xs text-ew-grey">

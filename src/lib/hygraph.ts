@@ -4,7 +4,7 @@ const HYGRAPH_TOKEN = process.env.HYGRAPH_TOKEN || "";
 export async function hygraphFetch<T>(
   query: string,
   variables?: Record<string, unknown>,
-  revalidate = 60
+  isDraft = false
 ): Promise<T> {
   if (!HYGRAPH_ENDPOINT) {
     console.warn("HYGRAPH_ENDPOINT not set – returning empty data");
@@ -23,7 +23,7 @@ export async function hygraphFetch<T>(
     method: "POST",
     headers,
     body: JSON.stringify({ query, variables }),
-    next: { revalidate },
+    ...(isDraft ? { cache: "no-store" as const } : { next: { revalidate: 60 } }),
   });
 
   const json = await res.json();

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { draftMode } from "next/headers";
 import Image from "next/image";
 import { hygraphFetch } from "@/lib/hygraph";
 import {
@@ -11,17 +12,20 @@ import HighlightCard from "@/components/HighlightCard";
 import FlightOfferCard from "@/components/FlightOfferCard";
 import ContentSection from "@/components/ContentSection";
 import DestinationCard from "@/components/DestinationCard";
+import PreviewBanner from "@/components/PreviewBanner";
 import type { Metadata } from "next";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-async function getPage(slug: string) {
+async function getPage(slug: string, isDraft: boolean) {
   try {
+    const stage = isDraft ? "DRAFT" : "PUBLISHED";
     const data = await hygraphFetch<{ destinationPage: DestinationPage | null }>(
       GET_DESTINATION_PAGE,
-      { slug }
+      { slug, stage },
+      isDraft
     );
     return data.destinationPage;
   } catch {
@@ -42,7 +46,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const page = await getPage(slug);
+  const page = await getPage(slug, false);
   return {
     title: page?.seo?.metaTitle || `${page?.title} – Eurowings`,
     description: page?.seo?.metaDescription,
@@ -51,12 +55,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function DestinationDetail({ params }: Props) {
   const { slug } = await params;
-  const page = await getPage(slug);
+  const { isEnabled: isDraft } = draftMode();
+  const page = await getPage(slug, isDraft);
   if (!page) notFound();
 
   return (
     <>
-      {/* Hero */}
+      {isDraft && <PreviewBanner />}
+
       <section className="relative flex h-80 items-end overflow-hidden bg-ew-dark md:h-96">
         {page.coverImage?.url ? (
           <Image
@@ -92,7 +98,6 @@ export default async function DestinationDetail({ params }: Props) {
       </section>
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Highlights */}
         {page.highlights && page.highlights.length > 0 && (
           <section className="mb-12">
             <div className="grid gap-4 sm:grid-cols-3">
@@ -103,7 +108,6 @@ export default async function DestinationDetail({ params }: Props) {
           </section>
         )}
 
-        {/* Description */}
         {page.description?.html && (
           <section className="mb-12 rounded-2xl bg-white p-6 shadow-sm md:p-8">
             <div
@@ -113,7 +117,6 @@ export default async function DestinationDetail({ params }: Props) {
           </section>
         )}
 
-        {/* Flight Offers */}
         {page.flightOffers && page.flightOffers.length > 0 && (
           <section className="mb-12">
             <h2 className="mb-6 text-2xl font-bold text-ew-dark">
@@ -127,7 +130,6 @@ export default async function DestinationDetail({ params }: Props) {
           </section>
         )}
 
-        {/* Content Sections */}
         {page.contentSections && page.contentSections.length > 0 && (
           <section className="mb-12 space-y-6">
             {page.contentSections.map((section, idx) => (
@@ -136,7 +138,6 @@ export default async function DestinationDetail({ params }: Props) {
           </section>
         )}
 
-        {/* Related Destinations */}
         {page.relatedDestinations && page.relatedDestinations.length > 0 && (
           <section className="mb-12">
             <h2 className="mb-6 text-2xl font-bold text-ew-dark">
@@ -150,7 +151,6 @@ export default async function DestinationDetail({ params }: Props) {
           </section>
         )}
 
-        {/* Legal */}
         {page.legalNotes && page.legalNotes.length > 0 && (
           <div className="space-y-2 text-xs text-ew-grey">
             {page.legalNotes.map((note) => (

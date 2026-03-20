@@ -1,7 +1,9 @@
+import { draftMode } from "next/headers";
 import { hygraphFetch } from "@/lib/hygraph";
 import { GET_ALL_DESTINATIONS } from "@/lib/queries";
 import type { DestinationPage } from "@/lib/types";
 import DestinationCard from "@/components/DestinationCard";
+import PreviewBanner from "@/components/PreviewBanner";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,10 +11,13 @@ export const metadata: Metadata = {
   description: "Explore all Eurowings destinations across Europe and beyond.",
 };
 
-async function getDestinations() {
+async function getDestinations(isDraft: boolean) {
   try {
+    const stage = isDraft ? "DRAFT" : "PUBLISHED";
     const data = await hygraphFetch<{ destinationPages: DestinationPage[] }>(
-      GET_ALL_DESTINATIONS
+      GET_ALL_DESTINATIONS,
+      { stage },
+      isDraft
     );
     return data.destinationPages || [];
   } catch {
@@ -21,10 +26,13 @@ async function getDestinations() {
 }
 
 export default async function DestinationsPage() {
-  const destinations = await getDestinations();
+  const { isEnabled: isDraft } = draftMode();
+  const destinations = await getDestinations(isDraft);
 
   return (
     <>
+      {isDraft && <PreviewBanner />}
+
       <section className="bg-gradient-to-br from-ew-primary-dark to-ew-primary py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-extrabold text-white md:text-5xl">

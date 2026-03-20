@@ -1,7 +1,9 @@
+import { draftMode } from "next/headers";
 import { hygraphFetch } from "@/lib/hygraph";
 import { GET_FAQ_PAGE } from "@/lib/queries";
 import type { FaqPageData, FaqCategory } from "@/lib/types";
 import FaqAccordion from "@/components/FaqAccordion";
+import PreviewBanner from "@/components/PreviewBanner";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,12 +11,13 @@ export const metadata: Metadata = {
   description: "Find answers to your questions about flights, baggage, rebooking, and more.",
 };
 
-async function getFaqData() {
+async function getFaqData(isDraft: boolean) {
   try {
+    const stage = isDraft ? "DRAFT" : "PUBLISHED";
     const data = await hygraphFetch<{
       faqPages: FaqPageData[];
       faqCategories: FaqCategory[];
-    }>(GET_FAQ_PAGE);
+    }>(GET_FAQ_PAGE, { stage }, isDraft);
     return {
       page: data.faqPages?.[0] || null,
       categories: data.faqCategories || [],
@@ -25,10 +28,13 @@ async function getFaqData() {
 }
 
 export default async function FaqPage() {
-  const { page, categories } = await getFaqData();
+  const { isEnabled: isDraft } = draftMode();
+  const { page, categories } = await getFaqData(isDraft);
 
   return (
     <>
+      {isDraft && <PreviewBanner />}
+
       <section className="bg-gradient-to-br from-ew-primary-dark to-ew-primary py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-extrabold text-white md:text-5xl">

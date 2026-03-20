@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { draftMode } from "next/headers";
 import { hygraphFetch } from "@/lib/hygraph";
 import { GET_LANDING_PAGE, GET_ALL_LANDING_PAGE_SLUGS } from "@/lib/queries";
 import type { LandingPage, ContentBlock } from "@/lib/types";
@@ -7,6 +8,7 @@ import ContentSection from "@/components/ContentSection";
 import PromoCard from "@/components/PromoCard";
 import FlightOfferCard from "@/components/FlightOfferCard";
 import DestinationCard from "@/components/DestinationCard";
+import PreviewBanner from "@/components/PreviewBanner";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -14,11 +16,13 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-async function getPage(slug: string) {
+async function getPage(slug: string, isDraft: boolean) {
   try {
+    const stage = isDraft ? "DRAFT" : "PUBLISHED";
     const data = await hygraphFetch<{ landingPage: LandingPage | null }>(
       GET_LANDING_PAGE,
-      { slug }
+      { slug, stage },
+      isDraft
     );
     return data.landingPage;
   } catch {
@@ -39,7 +43,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const page = await getPage(slug);
+  const page = await getPage(slug, false);
   return {
     title: page?.seo?.metaTitle || `${page?.title} – Eurowings`,
     description: page?.seo?.metaDescription,
@@ -91,15 +95,17 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
 
 export default async function LandingPageRoute({ params }: Props) {
   const { slug } = await params;
-  const page = await getPage(slug);
+  const { isEnabled: isDraft } = draftMode();
+  const page = await getPage(slug, isDraft);
   if (!page) notFound();
 
   return (
     <>
+      {isDraft && <PreviewBanner />}
+
       {page.heroBanner && <HeroBanner hero={page.heroBanner} compact />}
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Content Blocks */}
         {page.contentBlocks && page.contentBlocks.length > 0 && (
           <section className="mb-12">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -110,7 +116,6 @@ export default async function LandingPageRoute({ params }: Props) {
           </section>
         )}
 
-        {/* Content Sections */}
         {page.contentSections && page.contentSections.length > 0 && (
           <section className="mb-12 space-y-6">
             {page.contentSections.map((section, idx) => (
@@ -119,7 +124,6 @@ export default async function LandingPageRoute({ params }: Props) {
           </section>
         )}
 
-        {/* Legal */}
         {page.legalNotes && page.legalNotes.length > 0 && (
           <div className="space-y-2 text-xs text-ew-grey">
             {page.legalNotes.map((note) => (

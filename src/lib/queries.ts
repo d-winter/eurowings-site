@@ -1,6 +1,6 @@
 export const GET_HOMEPAGE = `
-  query GetHomepage {
-    homepages(first: 1, stage: PUBLISHED) {
+  query GetHomepage($stage: Stage! = PUBLISHED) {
+    homepages(first: 1, stage: $stage) {
       title
       slug
       seo { metaTitle metaDescription ogImage noIndex }
@@ -26,8 +26,8 @@ export const GET_HOMEPAGE = `
 `;
 
 export const GET_DESTINATION_PAGE = `
-  query GetDestinationPage($slug: String!) {
-    destinationPage(where: { slug: $slug }, stage: PUBLISHED) {
+  query GetDestinationPage($slug: String!, $stage: Stage! = PUBLISHED) {
+    destinationPage(where: { slug: $slug }, stage: $stage) {
       title
       slug
       description { html }
@@ -61,8 +61,8 @@ export const GET_ALL_DESTINATION_SLUGS = `
 `;
 
 export const GET_ALL_DESTINATIONS = `
-  query GetAllDestinations {
-    destinationPages(stage: PUBLISHED, first: 50) {
+  query GetAllDestinations($stage: Stage! = PUBLISHED) {
+    destinationPages(stage: $stage, first: 50) {
       id title slug startingPrice currency
       coverImage { url }
       airport { name iataCode city country }
@@ -71,12 +71,12 @@ export const GET_ALL_DESTINATIONS = `
 `;
 
 export const GET_FAQ_PAGE = `
-  query GetFaqPage {
-    faqPages(first: 1, stage: PUBLISHED) {
+  query GetFaqPage($stage: Stage! = PUBLISHED) {
+    faqPages(first: 1, stage: $stage) {
       title description
       seo { metaTitle metaDescription }
     }
-    faqCategories(stage: PUBLISHED) {
+    faqCategories(stage: $stage) {
       id title slug description icon
       faqItems(orderBy: sortOrder_ASC) {
         id question answer { html } sortOrder
@@ -86,8 +86,8 @@ export const GET_FAQ_PAGE = `
 `;
 
 export const GET_LANDING_PAGE = `
-  query GetLandingPage($slug: String!) {
-    landingPage(where: { slug: $slug }, stage: PUBLISHED) {
+  query GetLandingPage($slug: String!, $stage: Stage! = PUBLISHED) {
+    landingPage(where: { slug: $slug }, stage: $stage) {
       title
       slug
       seo { metaTitle metaDescription ogImage noIndex }
