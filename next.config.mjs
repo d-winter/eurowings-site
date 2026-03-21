@@ -12,6 +12,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/home",
+        destination: "/",
+      },
+    ];
+  },
   async headers() {
     return [
       {

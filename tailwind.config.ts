@@ -25,7 +25,7 @@ const config: Config = {
         },
       },
       animation: {
-        ticker: "ticker 30s linear infinite",
+        ticker: "ticker 39s linear infinite",
       },
     },
   },
