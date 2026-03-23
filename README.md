@@ -58,4 +58,12 @@ Deploy to Vercel with one click:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
 
-Set the `HYGRAPH_ENDPOINT` environment variable in Vercel project settings.
+Set the `HYGRAPH_ENDPOINT` (and optional Hygraph tokens) in Vercel **Project → Settings → Environment Variables**.
+
+### Auto-rebuild when content is published (Hygraph → Vercel)
+
+To refresh the live site after editors publish in Hygraph, use a **Vercel Deploy Hook** and a **Hygraph webhook** (no app code required). Step-by-step: **[docs/hygraph-vercel-webhook.md](./docs/hygraph-vercel-webhook.md)** — same flow as [Hygraph’s Vercel webhook guide](https://hygraph.com/docs/developer-guides/webhooks/trigger-static-build).
+
+**Summary:** Vercel **Settings → Git → Deploy Hooks** → copy URL → Hygraph **Project settings → AI & Automation → Webhooks** → paste URL, stage **Published**, configure triggers. Keep the deploy hook URL secret.
+
+Published API responses are also cached with **~60s revalidation** (`src/lib/hygraph.ts`); a deploy hook guarantees a full rebuild after publish (needed for new static routes and when you want immediate consistency).
