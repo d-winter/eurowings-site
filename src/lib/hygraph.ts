@@ -1,3 +1,5 @@
+import { HYGRAPH_CACHE_TAG } from "./cache-tags";
+
 const HYGRAPH_ENDPOINT = process.env.HYGRAPH_ENDPOINT || "";
 const PRODUCTION_TOKEN = process.env.HYGRAPH_PRODUCTION_TOKEN || "";
 const PREVIEW_TOKEN = process.env.HYGRAPH_PREVIEW_TOKEN || "";
@@ -26,7 +28,9 @@ export async function hygraphFetch<T>(
     method: "POST",
     headers,
     body: JSON.stringify({ query, variables }),
-    ...(isDraft ? { cache: "no-store" as const } : { next: { revalidate: 60 } }),
+    ...(isDraft
+      ? { cache: "no-store" as const }
+      : { next: { revalidate: 60, tags: [HYGRAPH_CACHE_TAG] } }),
   });
 
   const json = await res.json();

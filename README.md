@@ -60,10 +60,13 @@ Deploy to Vercel with one click:
 
 Set the `HYGRAPH_ENDPOINT` (and optional Hygraph tokens) in Vercel **Project → Settings → Environment Variables**.
 
-### Auto-rebuild when content is published (Hygraph → Vercel)
+### Fresh content after publish (Hygraph webhooks)
 
-To refresh the live site after editors publish in Hygraph, use a **Vercel Deploy Hook** and a **Hygraph webhook** (no app code required). Step-by-step: **[docs/hygraph-vercel-webhook.md](./docs/hygraph-vercel-webhook.md)** — same flow as [Hygraph’s Vercel webhook guide](https://hygraph.com/docs/developer-guides/webhooks/trigger-static-build).
+**Recommended — on-demand revalidation (seconds):** set `REVALIDATE_SECRET` in Vercel, then add a Hygraph webhook to  
+`https://<your-domain>/api/revalidate?secret=<REVALIDATE_SECRET>`.  
+Details: **[docs/on-demand-revalidation.md](./docs/on-demand-revalidation.md)**.
 
-**Summary:** Vercel **Settings → Git → Deploy Hooks** → copy URL → Hygraph **Project settings → AI & Automation → Webhooks** → paste URL, stage **Published**, configure triggers. Keep the deploy hook URL secret.
+**Optional — full Vercel rebuild (minutes):** use a **Deploy Hook** instead of or in addition to the route above.  
+See **[docs/hygraph-vercel-webhook.md](./docs/hygraph-vercel-webhook.md)** and [Hygraph’s guide](https://hygraph.com/docs/developer-guides/webhooks/trigger-static-build).
 
-Published API responses are also cached with **~60s revalidation** (`src/lib/hygraph.ts`); a deploy hook guarantees a full rebuild after publish (needed for new static routes and when you want immediate consistency).
+Published Hygraph fetches use tag **`hygraph`** with **~60s** time-based revalidation (`src/lib/hygraph.ts`); `/api/revalidate` clears that cache immediately.

@@ -36,9 +36,9 @@ Webhooks are **per Hygraph environment**; repeat for staging if you use multiple
 1. Publish a visible change in Hygraph (**Save and publish**).
 2. In Vercel → **Deployments**, confirm a new deployment started.
 
-## Optional: faster updates without a full deploy
+## On-demand revalidation (recommended for daily publishes)
 
-For **near-instant** cache busting without rebuilding the whole site, you can add a Next.js **on-demand revalidation** route and point Hygraph to that URL instead (or in addition). That is a separate pattern from deploy hooks; deploy hooks are the simplest ops-wise.
+For updates in **seconds** without a full deploy, use the app’s **`POST /api/revalidate`** endpoint with Hygraph webhooks. See **[on-demand-revalidation.md](./on-demand-revalidation.md)**. You can still keep a deploy hook for occasional full rebuilds.
 
 ## References
 
