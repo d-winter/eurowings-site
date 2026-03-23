@@ -5,16 +5,18 @@ import type { Metadata } from "next";
 import { hygraphFetch } from "@/lib/hygraph";
 import { hygraphLocales } from "@/lib/hygraph-locales";
 import { GET_LANDING_PAGE, GET_ALL_LANDING_PAGE_SLUGS } from "@/lib/queries";
-import type { LandingPage, ContentBlock } from "@/lib/types";
+import type { LandingPage, LandingBodyBlock } from "@/lib/types";
 import HeroBanner from "@/components/HeroBanner";
 import FlightSearchPanel from "@/components/FlightSearchPanel";
 import ContentSection from "@/components/ContentSection";
 import PromoCard from "@/components/PromoCard";
 import ServiceCard from "@/components/ServiceCard";
+import ContentBlockBanner from "@/components/ContentBlockBanner";
 import FlightOfferCard from "@/components/FlightOfferCard";
 import DestinationCard from "@/components/DestinationCard";
 import PreviewBanner from "@/components/PreviewBanner";
 import { Link } from "@/i18n/navigation";
+import { normalizeInternalHref } from "@/lib/internal-link";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -62,9 +64,15 @@ interface AliasedBlock extends Record<string, unknown> {
   destTitle?: string;
 }
 
-function ContentBlockRenderer({ block }: { block: ContentBlock }) {
-  const raw = block as ContentBlock & AliasedBlock;
+function ContentBlockRenderer({ block }: { block: LandingBodyBlock }) {
+  const raw = block as LandingBodyBlock & AliasedBlock;
   switch (block.__typename) {
+    case "ContentBlock":
+      return (
+        <div className="sm:col-span-2 lg:col-span-3">
+          <ContentBlockBanner block={block} embedded />
+        </div>
+      );
     case "Promotion":
       return <PromoCard promo={block} />;
     case "Service":
@@ -102,7 +110,7 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
       }
       return (
         <Link
-          href={block.url}
+          href={normalizeInternalHref(block.url)}
           className={className}
           data-hygraph-entry-id={block.id}
           data-hygraph-field-api-id="label"

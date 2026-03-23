@@ -133,6 +133,20 @@ export interface Homepage {
   legalNotes?: Disclaimer[];
   featuredDestinations?: DestinationPage[];
   services?: Service[];
+  /** Hygraph model ContentBlock — split image + text + CTA (e.g. under flight search) */
+  bannerContentBlocks?: SplitBannerContentBlock[];
+}
+
+/** Hygraph `ContentBlock` model (split full-width promo banner) */
+export interface SplitBannerContentBlock {
+  id: string;
+  __typename?: "ContentBlock";
+  title: string;
+  subheading?: string;
+  imageSide?: "LEFT" | "RIGHT";
+  sortOrder?: number;
+  image?: Asset;
+  cta?: CtaButton | null;
 }
 
 export interface FaqItem {
@@ -162,12 +176,14 @@ export interface FaqPageData {
   faqItems?: FaqItem[];
 }
 
-export type ContentBlock =
+/** Union members for Landing Page `contentBlocks` field */
+export type LandingBodyBlock =
   | (Promotion & { __typename: "Promotion" })
   | (FlightOffer & { __typename: "FlightOffer" })
   | (CtaButton & { __typename: "CtaButton" })
   | (DestinationPage & { __typename: "DestinationPage" })
-  | (Service & { __typename: "Service" });
+  | (Service & { __typename: "Service" })
+  | (SplitBannerContentBlock & { __typename: "ContentBlock" });
 
 export interface LandingPage {
   id: string;
@@ -176,7 +192,7 @@ export interface LandingPage {
   seo?: SeoMetadata;
   heroBanner?: HeroSection;
   contentSections?: ContentSectionData[];
-  contentBlocks?: ContentBlock[];
+  contentBlocks?: LandingBodyBlock[];
   legalNotes?: Disclaimer[];
 }
 

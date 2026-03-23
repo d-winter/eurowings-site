@@ -20,6 +20,11 @@ export const GET_HOMEPAGE = `
         id title teaser iconKey linkUrl linkLabel sortOrder
         image { url }
       }
+      bannerContentBlocks(orderBy: sortOrder_ASC, first: 10) {
+        id title subheading imageSide sortOrder
+        image { url }
+        cta { id label url variant openInNewTab }
+      }
       contentSections { id heading body { html } imageUrl }
       legalNotes { id title identifier content { html } }
       featuredDestinations {
@@ -127,6 +132,11 @@ export const GET_LANDING_PAGE = `
         ... on Service {
           __typename id title teaser iconKey linkUrl linkLabel sortOrder
           image { url }
+        }
+        ... on ContentBlock {
+          __typename id title subheading imageSide sortOrder
+          image { url }
+          cta { id label url variant openInNewTab }
         }
       }
       legalNotes { id title identifier content { html } }

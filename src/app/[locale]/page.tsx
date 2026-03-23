@@ -6,6 +6,7 @@ import { GET_HOMEPAGE } from "@/lib/queries";
 import type { Homepage } from "@/lib/types";
 import HeroBanner from "@/components/HeroBanner";
 import FlightSearchPanel from "@/components/FlightSearchPanel";
+import ContentBlockBanner from "@/components/ContentBlockBanner";
 import PromoCard from "@/components/PromoCard";
 import ServiceCard from "@/components/ServiceCard";
 import DestinationCard from "@/components/DestinationCard";
@@ -61,6 +62,14 @@ export default async function HomePage({ params }: Props) {
       )}
 
       <FlightSearchPanel />
+
+      {page?.bannerContentBlocks && page.bannerContentBlocks.length > 0 && (
+        <div className="space-y-0">
+          {page.bannerContentBlocks.map((block) => (
+            <ContentBlockBanner key={block.id} block={block} />
+          ))}
+        </div>
+      )}
 
       {page?.services && page.services.length > 0 && (
         <section className="border-y border-gray-100 bg-white py-12">
