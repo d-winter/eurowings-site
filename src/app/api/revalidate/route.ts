@@ -1,14 +1,18 @@
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyWebhookSignature } from "@hygraph/utils";
 import { HYGRAPH_CACHE_TAG } from "@/lib/cache-tags";
+
+/** Node runtime — @hygraph/utils uses Node crypto for HMAC verification */
+export const runtime = "nodejs";
 
 /**
  * On-demand revalidation for Hygraph-driven pages.
  *
- * Configure Hygraph webhook URL, e.g.:
- *   https://<your-domain>/api/revalidate?secret=<REVALIDATE_SECRET>
+ * **Recommended (Hygraph webhooks with secret key):** Hygraph sends `gcms-signature`;
+ * set the same value in `REVALIDATE_SECRET` as the webhook’s secret key in Studio.
  *
- * Or send header: Authorization: Bearer <REVALIDATE_SECRET>
+ * **Legacy:** `?secret=`, `Authorization: Bearer`, or JSON `{ "secret": "..." }`.
  */
 export async function POST(request: NextRequest) {
   const secret = process.env.REVALIDATE_SECRET;
@@ -19,33 +23,56 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const gcmsSignature = request.headers.get("gcms-signature");
+
+  if (gcmsSignature) {
+    const rawBody = await request.text();
+    const valid = verifyWebhookSignature({
+      signature: gcmsSignature,
+      secret,
+      rawPayload: rawBody,
+    });
+    if (!valid) {
+      return NextResponse.json({ message: "Invalid signature" }, { status: 401 });
+    }
+    revalidateTag(HYGRAPH_CACHE_TAG);
+    return NextResponse.json({
+      revalidated: true,
+      tag: HYGRAPH_CACHE_TAG,
+      via: "hygraph-signature",
+      now: Date.now(),
+    });
+  }
+
   const auth = request.headers.get("authorization");
   const bearer = auth?.startsWith("Bearer ") ? auth.slice(7).trim() : null;
   const querySecret = request.nextUrl.searchParams.get("secret")?.trim() ?? null;
 
-  const authorizedByHeaderOrQuery =
-    (bearer != null && bearer === secret) || (querySecret != null && querySecret === secret);
-
-  if (!authorizedByHeaderOrQuery) {
-    let bodySecret: string | undefined;
-    try {
-      const body = (await request.json()) as { secret?: string } | null;
-      if (body && typeof body.secret === "string") {
-        bodySecret = body.secret.trim();
-      }
-    } catch {
-      // No / invalid JSON body
-    }
-    if (bodySecret !== secret) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+  if (bearer === secret || querySecret === secret) {
+    revalidateTag(HYGRAPH_CACHE_TAG);
+    return NextResponse.json({
+      revalidated: true,
+      tag: HYGRAPH_CACHE_TAG,
+      via: "token",
+      now: Date.now(),
+    });
   }
 
-  revalidateTag(HYGRAPH_CACHE_TAG);
+  const rawBody = await request.text();
+  try {
+    const body = JSON.parse(rawBody) as { secret?: string };
+    if (typeof body.secret === "string" && body.secret.trim() === secret) {
+      revalidateTag(HYGRAPH_CACHE_TAG);
+      return NextResponse.json({
+        revalidated: true,
+        tag: HYGRAPH_CACHE_TAG,
+        via: "body",
+        now: Date.now(),
+      });
+    }
+  } catch {
+    // not JSON
+  }
 
-  return NextResponse.json({
-    revalidated: true,
-    tag: HYGRAPH_CACHE_TAG,
-    now: Date.now(),
-  });
+  return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 }

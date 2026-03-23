@@ -2,40 +2,41 @@
 
 Published Hygraph content is fetched with **tagged caching** (`hygraph` tag, 60s time-based revalidation). Calling **`POST /api/revalidate`** clears that cache so the next request loads fresh CMS data—usually **within seconds**, without a full Vercel build.
 
-## 1. Set the secret
+## Recommended: Hygraph webhook **secret key** (signed)
 
-1. Generate a long random string (e.g. `openssl rand -hex 32`).
-2. Add to **Vercel** → Project → **Settings** → **Environment Variables**:
-   - Name: `REVALIDATE_SECRET`
-   - Value: your random string  
-   - Apply to **Production** (and Preview/Development if you use webhooks there).
-3. Add the same variable locally in `.env.local` for testing.
+This matches [Hygraph’s webhook security model](https://hygraph.com/docs/api-reference/basics/webhooks#securing-webhooks):
 
-## 2. Point Hygraph at the route
+1. In Hygraph, create or edit the webhook → set a **Secret key** (shared secret).
+2. Point the webhook URL to `https://<your-domain>/api/revalidate` (no query string required).
+3. Set **`REVALIDATE_SECRET`** in Vercel to the **same** value as the Hygraph secret key and redeploy.
 
-In **Hygraph Studio** → **Project settings** → **AI & Automation** → **Webhooks** → **Add webhook**:
+Hygraph sends the **`gcms-signature`** header; the route verifies it with **`@hygraph/utils`** using the **raw request body** (required for a valid HMAC).
+
+A webhook was provisioned via Hygraph Management API — see **[hygraph-webhook-mcp.md](./hygraph-webhook-mcp.md)** for URL and env alignment.
+
+## 1. Set the secret (`REVALIDATE_SECRET`)
+
+1. Use the same string as the Hygraph webhook **Secret key** (or generate with `openssl rand -hex 32` and paste into both Hygraph and Vercel).
+2. Add to **Vercel** → **Settings** → **Environment Variables** → **`REVALIDATE_SECRET`** (Production, etc.).
+3. Add to **`.env.local`** for local tests.
+
+## 2. Hygraph webhook URL
 
 | Field | Suggestion |
 |--------|------------|
-| **URL** | `https://<your-production-domain>/api/revalidate?secret=<REVALIDATE_SECRET>` |
-| **Stage** | **Published** (avoid rebuilding cache on every draft save) |
-| **Action** | Leave empty for publish + unpublish, or restrict as needed |
-| **Content model** | Empty = all models, or limit to specific models |
+| **URL** | `https://<your-production-domain>/api/revalidate` |
+| **Secret key** | Same value as **`REVALIDATE_SECRET`** |
+| **Stage / Action** | Restrict as needed (e.g. **Published** + publish/unpublish only) |
 
-Replace `<REVALIDATE_SECRET>` with the **same** value as the env var (URL-encoded if it contains special characters).
+### Legacy (no Hygraph secret key)
 
-**Security:** The URL is sensitive (like a password). Only share it with Hygraph project admins; never commit it to git.
+You can still call the route with:
 
-### Alternative: `Authorization` header
+- `https://<domain>/api/revalidate?secret=<REVALIDATE_SECRET>`, or  
+- `Authorization: Bearer <REVALIDATE_SECRET>`, or  
+- JSON body `{ "secret": "<REVALIDATE_SECRET>" }`.
 
-If you prefer not to put the secret in the query string, use a tool that can add headers, or a tiny proxy. This app also accepts:
-
-```http
-POST /api/revalidate
-Authorization: Bearer <REVALIDATE_SECRET>
-```
-
-Hygraph’s default webhook UI only provides a URL field; the **query parameter** approach is usually simplest.
+Prefer the **signed webhook** path for production; query strings can leak in logs.
 
 ## 3. Test
 

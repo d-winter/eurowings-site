@@ -62,9 +62,8 @@ Set the `HYGRAPH_ENDPOINT` (and optional Hygraph tokens) in Vercel **Project →
 
 ### Fresh content after publish (Hygraph webhooks)
 
-**Recommended — on-demand revalidation (seconds):** set `REVALIDATE_SECRET` in Vercel, then add a Hygraph webhook to  
-`https://<your-domain>/api/revalidate?secret=<REVALIDATE_SECRET>`.  
-Details: **[docs/on-demand-revalidation.md](./docs/on-demand-revalidation.md)**.
+**Recommended — on-demand revalidation (seconds):** Hygraph webhook → `POST /api/revalidate` with a **shared secret key**; set the same value as **`REVALIDATE_SECRET`** in Vercel (signed `gcms-signature`).  
+Details: **[docs/on-demand-revalidation.md](./docs/on-demand-revalidation.md)** · webhook checklist: **[docs/hygraph-webhook-mcp.md](./docs/hygraph-webhook-mcp.md)**.
 
 **Optional — full Vercel rebuild (minutes):** use a **Deploy Hook** instead of or in addition to the route above.  
 See **[docs/hygraph-vercel-webhook.md](./docs/hygraph-vercel-webhook.md)** and [Hygraph’s guide](https://hygraph.com/docs/developer-guides/webhooks/trigger-static-build).
