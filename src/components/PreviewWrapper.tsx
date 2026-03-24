@@ -21,7 +21,7 @@ export function PreviewWrapper({ children }: { children: React.ReactNode }) {
     <HygraphPreview
       endpoint={endpoint}
       studioUrl={process.env.NEXT_PUBLIC_HYGRAPH_STUDIO_URL}
-      debug={false}
+      debug={true}
       mode="auto"
       onSave={() => {
         router.refresh();
