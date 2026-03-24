@@ -28,6 +28,9 @@ export default function ExploreClient({
   const [selectedOrigin, setSelectedOrigin] = useState<FlightAirport | null>(null);
   const [destinationCity, setDestinationCity] = useState("");
 
+  // Use local state for immediate UI update; URL param as fallback after navigation
+  const activeOrigin = selectedOrigin?.iataCode || origin;
+
   const handleOriginSelect = useCallback(
     (airport: FlightAirport) => {
       setSelectedOrigin(airport);
@@ -85,12 +88,12 @@ export default function ExploreClient({
         />
       </div>
 
-      {origin && (
+      {activeOrigin && (
         <div>
           <h2 className="mb-6 text-xl font-bold text-ew-dark">
-            Destinations from {selectedOrigin?.city || origin}
+            Destinations from {selectedOrigin?.city || activeOrigin}
           </h2>
-          <RouteGrid origin={origin} />
+          <RouteGrid origin={activeOrigin} />
         </div>
       )}
     </div>
