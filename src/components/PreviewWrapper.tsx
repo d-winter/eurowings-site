@@ -20,7 +20,7 @@ export function PreviewWrapper({ children }: { children: React.ReactNode }) {
   return (
     <HygraphPreview
       endpoint={endpoint}
-      debug={true}
+      debug={process.env.NODE_ENV === "development"}
       onSave={() => {
         router.refresh();
       }}
