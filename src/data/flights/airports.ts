@@ -84,16 +84,70 @@ export const AIRPORTS: Map<string, FlightAirport> = new Map([
   ["RVN", { iataCode: "RVN", name: "Rovaniemi Airport", city: "Rovaniemi", country: "Finland", countryCode: "FI" }],
 ]);
 
+/** German city/country names for airports where they differ from English */
+const DE_ALIASES: Record<string, string[]> = {
+  CGN: ["Köln", "Koeln"],
+  MUC: ["München", "Muenchen"],
+  DUS: ["Düsseldorf"],
+  HAM: ["Hamburg"],
+  BER: ["Berlin"],
+  STR: ["Stuttgart"],
+  VIE: ["Wien"],
+  PRG: ["Prag"],
+  LIS: ["Lissabon"],
+  BCN: ["Barcelona"],
+  FCO: ["Rom"],
+  MXP: ["Mailand"],
+  CDG: ["Paris"],
+  LHR: ["London"],
+  CPH: ["Kopenhagen"],
+  ARN: ["Stockholm"],
+  ATH: ["Athen"],
+  WAW: ["Warschau"],
+  KRK: ["Krakau"],
+  ZRH: ["Zürich"],
+  GVA: ["Genf"],
+  BUD: ["Budapest"],
+  IST: ["Istanbul"],
+  NAP: ["Neapel"],
+  PMI: ["Mallorca", "Palma"],
+  TFS: ["Teneriffa"],
+  HER: ["Heraklion", "Kreta"],
+  RHO: ["Rhodos"],
+  CFU: ["Korfu"],
+  ZTH: ["Zakynthos"],
+  SKG: ["Thessaloniki"],
+  KEF: ["Reykjavik", "Island"],
+  TOS: ["Tromsø", "Tromso"],
+  EDI: ["Edinburgh", "Schottland"],
+  DUB: ["Dublin", "Irland"],
+  BEG: ["Belgrad"],
+  ZAG: ["Zagreb", "Kroatien"],
+  SOF: ["Sofia", "Bulgarien"],
+  BOJ: ["Burgas", "Bulgarien"],
+  DBV: ["Dubrovnik", "Kroatien"],
+  SPU: ["Split", "Kroatien"],
+  SSH: ["Scharm el-Scheich", "Ägypten"],
+  HRG: ["Hurghada", "Ägypten"],
+  PFO: ["Paphos", "Zypern"],
+  MLA: ["Malta", "Valletta"],
+};
+
 export function getAirport(iataCode: string): FlightAirport | undefined {
   return AIRPORTS.get(iataCode.toUpperCase());
 }
 
 export function searchAirports(query: string): FlightAirport[] {
   const q = query.toLowerCase();
-  return Array.from(AIRPORTS.values()).filter(
-    (a) =>
+  return Array.from(AIRPORTS.values()).filter((a) => {
+    if (
       a.iataCode.toLowerCase().includes(q) ||
       a.name.toLowerCase().includes(q) ||
       a.city.toLowerCase().includes(q)
-  );
+    ) {
+      return true;
+    }
+    const aliases = DE_ALIASES[a.iataCode];
+    return aliases?.some((alias) => alias.toLowerCase().includes(q)) ?? false;
+  });
 }
