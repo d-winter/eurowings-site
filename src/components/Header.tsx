@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -10,12 +9,14 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const t = useTranslations("nav");
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const locale = useLocale();
 
-  // Preserve search params when switching locale
-  const qs = searchParams.toString();
-  const localeSwitchHref = qs ? `${pathname}?${qs}` : pathname;
+  // Preserve search params when switching locale (read from window to avoid Suspense requirement)
+  const localeSwitchHref = useMemo(() => {
+    if (typeof window === "undefined") return pathname;
+    const qs = window.location.search;
+    return qs ? `${pathname}${qs}` : pathname;
+  }, [pathname]);
 
   const nav = [
     { href: "/", key: "home" as const },

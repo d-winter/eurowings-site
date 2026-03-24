@@ -16,14 +16,16 @@ export const GET_HOMEPAGE = `
         id heading description priceFrom currency linkUrl linkLabel
         image { url }
       }
-      services(orderBy: sortOrder_ASC, first: 20) {
-        id title teaser iconKey linkUrl linkLabel sortOrder
-        image { url }
-      }
-      bannerContentBlocks(orderBy: sortOrder_ASC, first: 10) {
-        id title subheading imageSide panelStyle sortOrder
-        image { url }
-        cta { id label url variant openInNewTab }
+      belowSearchBlocks {
+        ... on Service {
+          __typename id title teaser iconKey linkUrl linkLabel sortOrder
+          image { url }
+        }
+        ... on ContentBlock {
+          __typename id title subheading imageSide panelStyle sortOrder
+          image { url }
+          cta { id label url variant openInNewTab }
+        }
       }
       contentSections { id heading body { html } imageUrl }
       legalNotes { id title identifier content { html } }
