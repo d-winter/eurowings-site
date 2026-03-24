@@ -32,15 +32,24 @@ export default function Header() {
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
-            {nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-sm font-medium text-ew-dark transition-colors hover:text-ew-primary"
-              >
-                {t(item.key)}
-              </Link>
-            ))}
+            {nav.map((item) => {
+              const isActive = item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-sm font-medium transition-colors hover:text-ew-primary ${
+                    isActive
+                      ? "text-ew-primary border-b-2 border-ew-primary pb-0.5"
+                      : "text-ew-dark"
+                  }`}
+                >
+                  {t(item.key)}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="hidden items-center gap-4 md:flex">
@@ -120,16 +129,23 @@ export default function Header() {
               DE
             </Link>
           </div>
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-lg px-3 py-2.5 font-medium text-ew-dark hover:bg-ew-light"
-              onClick={() => setMenuOpen(false)}
-            >
-              {t(item.key)}
-            </Link>
-          ))}
+          {nav.map((item) => {
+            const isActive = item.href === "/"
+              ? pathname === "/"
+              : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-lg px-3 py-2.5 font-medium transition-colors hover:bg-ew-light ${
+                  isActive ? "bg-ew-primary/5 text-ew-primary" : "text-ew-dark"
+                }`}
+                onClick={() => setMenuOpen(false)}
+              >
+                {t(item.key)}
+              </Link>
+            );
+          })}
           <Link
             href="/"
             className="mt-2 rounded-full bg-ew-primary px-5 py-2.5 text-center font-semibold text-white"
