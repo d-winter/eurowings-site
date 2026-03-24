@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { DestinationLandingPageData, FederatedFlightOffer } from "@/lib/types";
 import { applyVariant } from "@/lib/variants";
@@ -19,6 +20,8 @@ export default function DestinationLanding({
   destinationCode,
 }: DestinationLandingProps) {
   const t = useTranslations("explore");
+  const searchParams = useSearchParams();
+  const currentOrigin = searchParams.get("origin");
   const resolved = applyVariant(page, page.variants as Array<Partial<typeof page>>);
 
   return (
@@ -86,7 +89,7 @@ export default function DestinationLanding({
         {resolved.cta && (
           <section className="mb-12 text-center">
             <a
-              href={resolved.cta.url}
+              href={currentOrigin ? `${resolved.cta.url}${resolved.cta.url.includes("?") ? "&" : "?"}origin=${currentOrigin}` : resolved.cta.url}
               className="inline-block rounded-xl bg-ew-primary px-8 py-3 font-semibold text-white transition-colors hover:bg-ew-primary-dark"
               target={resolved.cta.openInNewTab ? "_blank" : undefined}
               rel={resolved.cta.openInNewTab ? "noopener noreferrer" : undefined}
