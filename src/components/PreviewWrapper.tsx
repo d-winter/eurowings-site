@@ -15,8 +15,6 @@ export function PreviewWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const endpoint = process.env.NEXT_PUBLIC_HYGRAPH_ENDPOINT;
 
-  console.log("[PreviewWrapper] mounting, endpoint:", endpoint ? "set" : "MISSING");
-
   if (!endpoint) return <>{children}</>;
 
   return (
