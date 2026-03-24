@@ -46,6 +46,7 @@ const SEGMENT_KEYS: Record<string, string> = {
 
 export default function RouteGrid({ origin }: RouteGridProps) {
   const [routes, setRoutes] = useState<FlightRoute[]>([]);
+  const [loadedOrigin, setLoadedOrigin] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
   const [filter, setFilter] = useState<string>("all");
@@ -55,6 +56,14 @@ export default function RouteGrid({ origin }: RouteGridProps) {
   const t = useTranslations("explore");
 
   useEffect(() => {
+    // Skip fetch + animation if we already have routes for this origin
+    if (loadedOrigin === origin && routes.length > 0) {
+      setLoading(false);
+      setVisible(true);
+      return;
+    }
+
+    const isFirstLoad = loadedOrigin === null;
     setLoading(true);
     setVisible(false);
     setFilter("all");
@@ -62,16 +71,18 @@ export default function RouteGrid({ origin }: RouteGridProps) {
     fetch(`/api/flights/routes?origin=${encodeURIComponent(origin)}`)
       .then((res) => res.json())
       .then((data: FlightRoute[]) => {
+        const delay = isFirstLoad ? 800 : 0;
         setTimeout(() => {
           setRoutes(data);
+          setLoadedOrigin(origin);
           setLoading(false);
           requestAnimationFrame(() => setVisible(true));
-        }, 800);
+        }, delay);
       })
       .catch(() => {
-        setTimeout(() => setLoading(false), 800);
+        setTimeout(() => setLoading(false), isFirstLoad ? 800 : 0);
       });
-  }, [origin]);
+  }, [origin, loadedOrigin, routes.length]);
 
   const filtered = filter === "all" ? routes : routes.filter((r) => r.segment === filter);
 
