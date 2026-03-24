@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -9,7 +10,12 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const t = useTranslations("nav");
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const locale = useLocale();
+
+  // Preserve search params when switching locale
+  const qs = searchParams.toString();
+  const localeSwitchHref = qs ? `${pathname}?${qs}` : pathname;
 
   const nav = [
     { href: "/", key: "home" as const },
@@ -55,7 +61,7 @@ export default function Header() {
           <div className="hidden items-center gap-4 md:flex">
             <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-1 py-0.5 text-xs font-semibold">
               <Link
-                href={pathname}
+                href={localeSwitchHref}
                 locale="en"
                 className={`rounded-full px-2.5 py-1 transition-colors ${
                   locale === "en" ? "bg-white text-ew-primary shadow-sm" : "text-ew-grey hover:text-ew-dark"
@@ -64,7 +70,7 @@ export default function Header() {
                 EN
               </Link>
               <Link
-                href={pathname}
+                href={localeSwitchHref}
                 locale="de"
                 className={`rounded-full px-2.5 py-1 transition-colors ${
                   locale === "de" ? "bg-white text-ew-primary shadow-sm" : "text-ew-grey hover:text-ew-dark"
