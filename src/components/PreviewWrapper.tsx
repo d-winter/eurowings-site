@@ -20,18 +20,10 @@ export function PreviewWrapper({ children }: { children: React.ReactNode }) {
   return (
     <HygraphPreview
       endpoint={endpoint}
-      studioUrl={process.env.NEXT_PUBLIC_HYGRAPH_STUDIO_URL}
-      debug={true}
-      mode="auto"
+      debug={process.env.NODE_ENV === "development"}
       onSave={() => {
         router.refresh();
       }}
-      overlay={{
-        style: { borderColor: "#A1045A", borderWidth: "2px" },
-        button: { backgroundColor: "#A1045A", color: "white" },
-      }}
-      // fieldUpdate must be true so Studio sends "field-update" messages and the
-      // preview iframe reflects edits side-by-side (see Preview SDK capabilities / fieldUpdateSync).
       sync={{ fieldFocus: true, fieldUpdate: true }}
     >
       {children}
