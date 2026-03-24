@@ -191,3 +191,51 @@ export const GET_TOP_BANNER_COLLECTION = `
     }
   }
 `;
+
+export const GET_SEGMENTS = `
+  query GetSegments($stage: Stage! = PUBLISHED) {
+    segments(stage: $stage) {
+      id
+      name
+    }
+  }
+`;
+
+export const GET_DESTINATION_LANDING_PAGE = `
+  query GetDestinationLandingPage($slug: String!, $stage: Stage! = PUBLISHED, $locales: [Locale!]!, $segmentId: ID, $origin: String!, $destination: String!) {
+    destinationLandingPages(where: { slug: $slug }, stage: $stage, locales: $locales, first: 1) {
+      id
+      title
+      slug
+      heroHeading
+      heroSubheading
+      heroImage { url }
+      description { html }
+      contentSections { heading body { html } }
+      seo { metaTitle metaDescription ogImage noIndex }
+      cta { id label url variant openInNewTab }
+      variants(where: { segments_some: { id: $segmentId } }) {
+        title
+        heroHeading
+        heroSubheading
+        heroImage { url }
+        description { html }
+        contentSections { heading body { html } }
+        cta { id label url variant openInNewTab }
+      }
+      flightOffers(origin: $origin, destination: $destination) {
+        airline
+        airlineCode
+        flightNumber
+        departureAirport
+        departureTime
+        arrivalAirport
+        arrivalTime
+        duration
+        price
+        currency
+        date
+      }
+    }
+  }
+`;

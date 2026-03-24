@@ -198,6 +198,51 @@ export interface LandingPage {
   legalNotes?: Disclaimer[];
 }
 
+/** Federated flight offer from REST Remote Source */
+export interface FederatedFlightOffer {
+  airline: string;
+  airlineCode: string;
+  flightNumber: string;
+  departureAirport: string;
+  departureTime: string;
+  arrivalAirport: string;
+  arrivalTime: string;
+  duration: string;
+  price: number;
+  currency: string;
+  date: string;
+}
+
+/** Hygraph Segment system model */
+export interface Segment {
+  id: string;
+  name: string;
+}
+
+/** DestinationLandingPage with variant support + federated flight data */
+export interface DestinationLandingPageData {
+  id: string;
+  title: string;
+  slug: string;
+  heroHeading?: string;
+  heroSubheading?: string;
+  heroImage?: Asset;
+  description?: { html: string };
+  contentSections?: ContentSectionData[];
+  seo?: SeoMetadata;
+  cta?: CtaButton;
+  variants?: Array<{
+    title?: string;
+    heroHeading?: string;
+    heroSubheading?: string;
+    heroImage?: Asset;
+    description?: { html: string };
+    contentSections?: ContentSectionData[];
+    cta?: CtaButton;
+  }>;
+  flightOffers?: FederatedFlightOffer[];
+}
+
 export const CURRENCY_SYMBOLS: Record<string, string> = {
   EUR: "\u20ac",
   GBP: "\u00a3",
