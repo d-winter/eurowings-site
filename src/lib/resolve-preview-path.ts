@@ -20,6 +20,9 @@ const RESOLVE_PREVIEW_ENTRY = `
     topBanner(where: { id: $id }, stage: DRAFT) {
       slug
     }
+    destinationLandingPage(where: { id: $id }, stage: DRAFT) {
+      slug
+    }
   }
 `;
 
@@ -29,6 +32,7 @@ type ResolveResult = {
   destinationPage: { slug: string } | null;
   homepage: { id: string } | null;
   topBanner: { slug: string } | null;
+  destinationLandingPage: { slug: string } | null;
 };
 
 /**
@@ -61,6 +65,9 @@ export function pathFromPublicationAndSlug(
   }
   if (pKey === "topbanner" || pKey === "topbanners") {
     return s ? `/collections/${s}` : null;
+  }
+  if (pKey === "destinationlandingpage" || pKey === "destinationlandingpages") {
+    return "/destinations/explore";
   }
 
   return null;
@@ -106,6 +113,9 @@ async function pathFromHygraphEntryId(id: string): Promise<string | null> {
     }
     if (data.topBanner?.slug) {
       return `/collections/${data.topBanner.slug}`;
+    }
+    if (data.destinationLandingPage) {
+      return "/destinations/explore";
     }
   } catch {
     return null;
