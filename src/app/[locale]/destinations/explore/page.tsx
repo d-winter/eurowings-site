@@ -62,7 +62,7 @@ export default async function ExplorePage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const { origin, destination, segment } = await searchParams;
-  const { isEnabled: isDraft } = await draftMode();
+  const { isEnabled: isDraft } = draftMode();
 
   const segments = await getSegments(isDraft);
 
