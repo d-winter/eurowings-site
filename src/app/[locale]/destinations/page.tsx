@@ -110,7 +110,7 @@ export default async function DestinationsPage({ params, searchParams }: Props) 
           labels={{
             selectOrigin: te("selectOrigin"),
             searchPlaceholder: te("searchPlaceholder"),
-            destinationsFrom: te("destinationsFrom"),
+            destinationsFrom: te("destinationsFrom", { origin: "{origin}" }),
             backToSearch: te("backToSearch"),
             featured: te("featured"),
           }}
