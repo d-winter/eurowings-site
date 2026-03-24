@@ -24,11 +24,23 @@ export default function DestinationLanding({
   const currentOrigin = searchParams.get("origin");
   const resolved = applyVariant(page, page.variants as Array<Partial<typeof page>>);
 
+  // For click-to-edit: use variant entry ID for variant fields, base entry ID for base fields
+  const variant = page.variants?.[0];
+  const variantId = variant?.id;
+  // Entry ID for fields that can be overridden by variants
+  const eid = variantId || page.id;
+  // Entry ID for fields that are always on the base entry (slug, seo)
+  const baseEid = page.id;
+
   return (
     <div>
       {/* Hero */}
       <section className="relative flex h-80 items-end overflow-hidden bg-ew-dark md:h-96">
-        <div className="absolute inset-0">
+        <div
+          className="absolute inset-0"
+          data-hygraph-entry-id={eid}
+          data-hygraph-field-api-id="heroImage"
+        >
           {resolved.heroImage?.url ? (
             <Image
               src={resolved.heroImage.url}
@@ -43,11 +55,21 @@ export default function DestinationLanding({
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-extrabold text-white md:text-5xl">
+          <h1
+            className="text-4xl font-extrabold text-white md:text-5xl"
+            data-hygraph-entry-id={eid}
+            data-hygraph-field-api-id="heroHeading"
+          >
             {resolved.heroHeading || resolved.title}
           </h1>
           {resolved.heroSubheading && (
-            <p className="mt-2 text-lg text-white/80">{resolved.heroSubheading}</p>
+            <p
+              className="mt-2 text-lg text-white/80"
+              data-hygraph-entry-id={eid}
+              data-hygraph-field-api-id="heroSubheading"
+            >
+              {resolved.heroSubheading}
+            </p>
           )}
           <p className="mt-1 text-white/60">{destinationCity} ({destinationCode})</p>
         </div>
@@ -60,6 +82,9 @@ export default function DestinationLanding({
             <div
               className="prose-ew"
               dangerouslySetInnerHTML={{ __html: resolved.description.html }}
+              data-hygraph-entry-id={eid}
+              data-hygraph-field-api-id="description"
+              data-hygraph-rich-text-format="html"
             />
           </section>
         )}
@@ -80,7 +105,7 @@ export default function DestinationLanding({
         {resolved.contentSections && resolved.contentSections.length > 0 && (
           <section className="mb-12 space-y-6">
             {resolved.contentSections.map((section, idx) => (
-              <ContentSection key={section.id || idx} section={section} entryId={resolved.id} />
+              <ContentSection key={section.id || idx} section={section} entryId={eid} />
             ))}
           </section>
         )}
@@ -93,6 +118,8 @@ export default function DestinationLanding({
               className="inline-block rounded-xl bg-ew-primary px-8 py-3 font-semibold text-white transition-colors hover:bg-ew-primary-dark"
               target={resolved.cta.openInNewTab ? "_blank" : undefined}
               rel={resolved.cta.openInNewTab ? "noopener noreferrer" : undefined}
+              data-hygraph-entry-id={resolved.cta.id}
+              data-hygraph-field-api-id="label"
             >
               {resolved.cta.label}
             </a>

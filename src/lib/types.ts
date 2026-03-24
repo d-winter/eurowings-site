@@ -232,6 +232,7 @@ export interface DestinationLandingPageData {
   seo?: SeoMetadata;
   cta?: CtaButton;
   variants?: Array<{
+    id?: string;
     title?: string;
     heroHeading?: string;
     heroSubheading?: string;

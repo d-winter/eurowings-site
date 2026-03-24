@@ -213,16 +213,17 @@ export const GET_DESTINATION_LANDING_PAGE = `
       heroSubheading
       heroImage { url }
       description { html }
-      contentSections { heading body { html } }
+      contentSections { id heading body { html } }
       seo { metaTitle metaDescription ogImage noIndex }
       cta { id label url variant openInNewTab }
       variants(where: { segments_some: { id: $segmentId } }, locales: $locales) {
+        id
         title
         heroHeading
         heroSubheading
         heroImage { url }
         description { html }
-        contentSections { heading body { html } }
+        contentSections { id heading body { html } }
         cta { id label url variant openInNewTab }
       }
       flightOffers(origin: $origin, destination: $destination) {
