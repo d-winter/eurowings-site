@@ -67,8 +67,10 @@
     "title": "Explore Destinations",
     "subtitle": "Find flights from major German airports",
     "selectOrigin": "Where are you flying from?",
+    "searchPlaceholder": "Search for an airport (e.g., Cologne, Berlin)...",
     "destinationsFrom": "Destinations from {origin}",
-    "backToSearch": "← Back to destinations"
+    "backToSearch": "\u2190 Back to destinations",
+    "featured": "Featured Destinations"
   },
   "faq": {
     "fallbackTitle": "Frequently asked questions",

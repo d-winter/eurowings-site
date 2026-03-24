@@ -63,6 +63,15 @@
     "availableFlights": "Verfügbare Flüge",
     "youMightAlsoLike": "Das könnte dir auch gefallen"
   },
+  "explore": {
+    "title": "Reiseziele entdecken",
+    "subtitle": "Finde Flüge ab den großen deutschen Flughäfen",
+    "selectOrigin": "Von wo fliegst du?",
+    "searchPlaceholder": "Flughafen suchen (z.\u00a0B. Köln, Berlin)...",
+    "destinationsFrom": "Reiseziele ab {origin}",
+    "backToSearch": "\u2190 Zurück zu den Reisezielen",
+    "featured": "Beliebte Reiseziele"
+  },
   "faq": {
     "fallbackTitle": "Häufig gestellte Fragen",
     "fallbackDescription": "Antworten auf deine Fragen zu Flügen, Gepäck, Umbuchung und mehr.",

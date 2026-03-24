@@ -79,6 +79,7 @@ export default async function DestinationsPage({ params, searchParams }: Props) 
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("destinations");
+  const te = await getTranslations("explore");
   const { origin, destination, segment } = await searchParams;
   const { isEnabled: isDraft } = draftMode();
 
@@ -106,11 +107,18 @@ export default async function DestinationsPage({ params, searchParams }: Props) 
           destinationCode={destinationCode}
           heroTitle={t("heroTitle")}
           heroSubtitle={t("heroSubtitle")}
+          labels={{
+            selectOrigin: te("selectOrigin"),
+            searchPlaceholder: te("searchPlaceholder"),
+            destinationsFrom: te("destinationsFrom"),
+            backToSearch: te("backToSearch"),
+            featured: te("featured"),
+          }}
         >
           {/* CMS destinations passed as children for the search/browse view */}
           {destinations.length > 0 && (
             <section className="mt-16">
-              <h2 className="mb-6 text-2xl font-bold text-ew-dark">Featured Destinations</h2>
+              <h2 className="mb-6 text-2xl font-bold text-ew-dark">{te("featured")}</h2>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {destinations.map((dest) => (
                   <DestinationCard key={dest.id} destination={dest} />

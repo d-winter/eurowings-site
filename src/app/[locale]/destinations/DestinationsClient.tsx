@@ -8,11 +8,20 @@ import DestinationLanding from "@/components/DestinationLanding";
 import type { DestinationLandingPageData } from "@/lib/types";
 import type { FlightAirport } from "@/data/flights/types";
 
+interface ExploreLabels {
+  selectOrigin: string;
+  searchPlaceholder: string;
+  destinationsFrom: string;
+  backToSearch: string;
+  featured: string;
+}
+
 interface DestinationsClientProps {
   landingPage: DestinationLandingPageData | null;
   destinationCode: string;
   heroTitle: string;
   heroSubtitle: string;
+  labels: ExploreLabels;
   children: ReactNode;
 }
 
@@ -21,6 +30,7 @@ export default function DestinationsClient({
   destinationCode,
   heroTitle,
   heroSubtitle,
+  labels,
   children,
 }: DestinationsClientProps) {
   const searchParams = useSearchParams();
@@ -57,7 +67,7 @@ export default function DestinationsClient({
             onClick={handleBack}
             className="text-sm text-ew-primary hover:underline"
           >
-            &larr; Back to destinations
+            {labels.backToSearch}
           </button>
         </div>
         <DestinationLanding
@@ -80,11 +90,11 @@ export default function DestinationsClient({
 
           <div className="mt-8">
             <label className="mb-2 block text-sm font-medium text-white/90">
-              Where are you flying from?
+              {labels.selectOrigin}
             </label>
             <AirportSearch
               onSelect={handleOriginSelect}
-              placeholder="Search for an airport (e.g., Cologne, Berlin)..."
+              placeholder={labels.searchPlaceholder}
             />
           </div>
         </div>
@@ -95,7 +105,7 @@ export default function DestinationsClient({
         {activeOrigin && (
           <div className="mb-12">
             <h2 className="mb-6 text-xl font-bold text-ew-dark">
-              Destinations from {selectedOrigin?.city || activeOrigin}
+              {labels.destinationsFrom.replace("{origin}", selectedOrigin?.city || activeOrigin)}
             </h2>
             <RouteGrid origin={activeOrigin} />
           </div>
