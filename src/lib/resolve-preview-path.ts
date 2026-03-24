@@ -67,7 +67,7 @@ export function pathFromPublicationAndSlug(
     return s ? `/collections/${s}` : null;
   }
   if (pKey === "destinationlandingpage" || pKey === "destinationlandingpages") {
-    return "/destinations/explore";
+    return "/destinations";
   }
 
   return null;
@@ -115,7 +115,7 @@ async function pathFromHygraphEntryId(id: string): Promise<string | null> {
       return `/collections/${data.topBanner.slug}`;
     }
     if (data.destinationLandingPage) {
-      return "/destinations/explore";
+      return "/destinations";
     }
   } catch {
     return null;
