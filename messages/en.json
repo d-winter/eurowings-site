@@ -63,6 +63,13 @@
     "availableFlights": "Available flights",
     "youMightAlsoLike": "You might also like"
   },
+  "explore": {
+    "title": "Explore Destinations",
+    "subtitle": "Find flights from major German airports",
+    "selectOrigin": "Where are you flying from?",
+    "destinationsFrom": "Destinations from {origin}",
+    "backToSearch": "← Back to destinations"
+  },
   "faq": {
     "fallbackTitle": "Frequently asked questions",
     "fallbackDescription": "Find answers to all your questions about flights, baggage, rebooking, and more.",
