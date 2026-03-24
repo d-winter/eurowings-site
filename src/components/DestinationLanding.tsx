@@ -24,10 +24,10 @@ export default function DestinationLanding({
   const currentOrigin = searchParams.get("origin");
   const resolved = applyVariant(page, page.variants as Array<Partial<typeof page>>);
 
-  // For click-to-edit: use variant entry ID for variant-overridden fields,
-  // base entry ID for base-only fields (slug, seo)
-  const variant = page.variants?.[0];
-  const eid = variant?.id || page.id;
+  // Click-to-edit: use base entry ID for all fields.
+  // Variant-level click-to-edit (focusing the variant form) is not yet supported
+  // by the preview SDK — it requires ComponentFieldManager to support form levels.
+  const eid = page.id;
 
   return (
     <div>
