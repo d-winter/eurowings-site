@@ -1,14 +1,20 @@
+import { Suspense } from "react";
 import { draftMode } from "next/headers";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import { hygraphFetch } from "@/lib/hygraph";
 import { hygraphLocales } from "@/lib/hygraph-locales";
-import { GET_ALL_DESTINATIONS } from "@/lib/queries";
-import type { DestinationPage } from "@/lib/types";
+import { GET_ALL_DESTINATIONS, GET_DESTINATION_LANDING_PAGE, GET_SEGMENTS } from "@/lib/queries";
+import type { DestinationPage, DestinationLandingPageData, Segment } from "@/lib/types";
+import { findSegmentId } from "@/lib/variants";
 import DestinationCard from "@/components/DestinationCard";
 import PreviewBanner from "@/components/PreviewBanner";
+import DestinationsClient from "./DestinationsClient";
 
-type Props = { params: Promise<{ locale: string }> };
+type Props = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ origin?: string; destination?: string; segment?: string }>;
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -34,38 +40,86 @@ async function getDestinations(isDraft: boolean, locale: string) {
   }
 }
 
-export default async function DestinationsPage({ params }: Props) {
+async function getSegments(isDraft: boolean): Promise<Segment[]> {
+  try {
+    const stage = isDraft ? "DRAFT" : "PUBLISHED";
+    const data = await hygraphFetch<{ segments: Segment[] }>(
+      GET_SEGMENTS,
+      { stage },
+      isDraft
+    );
+    return data.segments || [];
+  } catch {
+    return [];
+  }
+}
+
+async function getLandingPage(
+  segmentId: string | undefined,
+  origin: string,
+  destination: string,
+  isDraft: boolean,
+  locale: string
+): Promise<DestinationLandingPageData | null> {
+  try {
+    const stage = isDraft ? "DRAFT" : "PUBLISHED";
+    const locales = hygraphLocales(locale);
+    const data = await hygraphFetch<{ destinationLandingPages: DestinationLandingPageData[] }>(
+      GET_DESTINATION_LANDING_PAGE,
+      { slug: "destination", stage, locales, segmentId: segmentId || null, origin, destination },
+      isDraft
+    );
+    return data.destinationLandingPages?.[0] || null;
+  } catch {
+    return null;
+  }
+}
+
+export default async function DestinationsPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("destinations");
-
+  const { origin, destination, segment } = await searchParams;
   const { isEnabled: isDraft } = draftMode();
-  const destinations = await getDestinations(isDraft, locale);
+
+  const [destinations, segments] = await Promise.all([
+    getDestinations(isDraft, locale),
+    getSegments(isDraft),
+  ]);
+
+  let landingPage: DestinationLandingPageData | null = null;
+  let destinationCode = "";
+
+  if (origin && destination && segment) {
+    const segmentId = findSegmentId(segments, segment);
+    landingPage = await getLandingPage(segmentId, origin, destination, isDraft, locale);
+    destinationCode = destination;
+  }
 
   return (
     <>
       {isDraft && <PreviewBanner />}
 
-      <section className="bg-gradient-to-br from-ew-primary-dark to-ew-primary py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-extrabold text-white md:text-5xl">{t("heroTitle")}</h1>
-          <p className="mt-4 max-w-xl text-lg text-white/80">{t("heroSubtitle")}</p>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {destinations.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {destinations.map((dest) => (
-              <DestinationCard key={dest.id} destination={dest} />
-            ))}
-          </div>
-        ) : (
-          <div className="py-20 text-center">
-            <p className="text-lg text-ew-grey">{t("empty")}</p>
-          </div>
-        )}
-      </section>
+      <Suspense fallback={<div className="py-12 text-center text-ew-grey">Loading...</div>}>
+        <DestinationsClient
+          landingPage={landingPage}
+          destinationCode={destinationCode}
+          heroTitle={t("heroTitle")}
+          heroSubtitle={t("heroSubtitle")}
+        >
+          {/* CMS destinations passed as children for the search/browse view */}
+          {destinations.length > 0 && (
+            <section className="mt-16">
+              <h2 className="mb-6 text-2xl font-bold text-ew-dark">Featured Destinations</h2>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {destinations.map((dest) => (
+                  <DestinationCard key={dest.id} destination={dest} />
+                ))}
+              </div>
+            </section>
+          )}
+        </DestinationsClient>
+      </Suspense>
     </>
   );
 }
