@@ -2,22 +2,20 @@
 
 import { useState, useCallback } from "react";
 import Image from "next/image";
-import { useRouter as useNextRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const t = useTranslations("nav");
   const pathname = usePathname();
   const locale = useLocale();
-  const nextRouter = useNextRouter();
+  const router = useRouter();
 
-  const switchLocale = useCallback((targetLocale: string) => {
+  const switchLocale = useCallback((targetLocale: "en" | "de") => {
     const qs = typeof window !== "undefined" ? window.location.search : "";
-    const prefix = targetLocale === "en" ? "" : `/${targetLocale}`;
-    nextRouter.push(`${prefix}${pathname}${qs}`);
-  }, [pathname, nextRouter]);
+    router.push(`${pathname}${qs}`, { locale: targetLocale });
+  }, [pathname, router]);
 
   const nav = [
     { href: "/", key: "home" as const },
