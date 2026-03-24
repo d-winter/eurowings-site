@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { formatPrice } from "@/lib/types";
 
 interface RouteCardProps {
@@ -22,10 +25,10 @@ const SEGMENT_COLORS: Record<string, string> = {
   "adventure": "bg-emerald-50 text-emerald-700",
 };
 
-const SEGMENT_LABELS: Record<string, string> = {
-  "city-trip": "City Trip",
-  "beach-holiday": "Beach Holiday",
-  "adventure": "Adventure",
+const SEGMENT_KEYS: Record<string, string> = {
+  "city-trip": "cityTrips",
+  "beach-holiday": "beachHolidays",
+  "adventure": "adventure",
 };
 
 export default function RouteCard({
@@ -37,6 +40,8 @@ export default function RouteCard({
   currency,
   onClick,
 }: RouteCardProps) {
+  const t = useTranslations("explore");
+
   return (
     <button
       onClick={onClick}
@@ -49,11 +54,11 @@ export default function RouteCard({
         </div>
         <p className="mt-0.5 text-sm text-ew-grey">{country}</p>
         <span className={`mt-2 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${SEGMENT_COLORS[segment] || "bg-gray-100 text-gray-600"}`}>
-          {SEGMENT_LABELS[segment] || segment}
+          {SEGMENT_KEYS[segment] ? t(SEGMENT_KEYS[segment] as "cityTrips" | "beachHolidays" | "adventure") : segment}
         </span>
       </div>
       <div className="ml-4 text-right">
-        <p className="text-[11px] font-medium uppercase tracking-wide text-ew-grey">from</p>
+        <p className="text-[11px] font-medium uppercase tracking-wide text-ew-grey">{t("from")}</p>
         <p className="text-lg font-bold text-ew-primary">
           {formatPrice(lowestPrice, currency)}
         </p>

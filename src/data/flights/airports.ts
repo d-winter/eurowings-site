@@ -84,7 +84,29 @@ export const AIRPORTS: Map<string, FlightAirport> = new Map([
   ["RVN", { iataCode: "RVN", name: "Rovaniemi Airport", city: "Rovaniemi", country: "Finland", countryCode: "FI" }],
 ]);
 
-/** German city/country names for airports where they differ from English */
+/** German city names for display (first entry is the primary display name) */
+export const DE_CITY_NAMES: Record<string, string> = {
+  CGN: "Köln",
+  MUC: "München",
+  VIE: "Wien",
+  PRG: "Prag",
+  LIS: "Lissabon",
+  FCO: "Rom",
+  MXP: "Mailand",
+  CPH: "Kopenhagen",
+  ATH: "Athen",
+  WAW: "Warschau",
+  KRK: "Krakau",
+  ZRH: "Zürich",
+  GVA: "Genf",
+  NAP: "Neapel",
+  TFS: "Teneriffa",
+  RHO: "Rhodos",
+  CFU: "Korfu",
+  BEG: "Belgrad",
+};
+
+/** German search aliases (includes DE_CITY_NAMES plus additional search terms) */
 const DE_ALIASES: Record<string, string[]> = {
   CGN: ["Köln", "Koeln"],
   MUC: ["München", "Muenchen"],

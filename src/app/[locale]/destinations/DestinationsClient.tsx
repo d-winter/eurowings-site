@@ -2,26 +2,19 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useCallback, type ReactNode } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import AirportSearch from "@/components/AirportSearch";
 import RouteGrid from "@/components/RouteGrid";
 import DestinationLanding from "@/components/DestinationLanding";
 import type { DestinationLandingPageData } from "@/lib/types";
 import type { FlightAirport } from "@/data/flights/types";
-
-interface ExploreLabels {
-  selectOrigin: string;
-  searchPlaceholder: string;
-  destinationsFrom: string;
-  backToSearch: string;
-  featured: string;
-}
+import { DE_CITY_NAMES } from "@/data/flights/airports";
 
 interface DestinationsClientProps {
   landingPage: DestinationLandingPageData | null;
   destinationCode: string;
   heroTitle: string;
   heroSubtitle: string;
-  labels: ExploreLabels;
   children: ReactNode;
 }
 
@@ -30,11 +23,12 @@ export default function DestinationsClient({
   destinationCode,
   heroTitle,
   heroSubtitle,
-  labels,
   children,
 }: DestinationsClientProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("explore");
   const origin = searchParams.get("origin");
   const destination = searchParams.get("destination");
   const segment = searchParams.get("segment");
@@ -67,7 +61,7 @@ export default function DestinationsClient({
             onClick={handleBack}
             className="text-sm text-ew-primary hover:underline"
           >
-            {labels.backToSearch}
+            {t("backToSearch")}
           </button>
         </div>
         <DestinationLanding
@@ -90,11 +84,11 @@ export default function DestinationsClient({
 
           <div className="mt-8">
             <label className="mb-2 block text-sm font-medium text-white/90">
-              {labels.selectOrigin}
+              {t("selectOrigin")}
             </label>
             <AirportSearch
               onSelect={handleOriginSelect}
-              placeholder={labels.searchPlaceholder}
+              placeholder={t("searchPlaceholder")}
             />
           </div>
         </div>
@@ -105,7 +99,11 @@ export default function DestinationsClient({
         {activeOrigin && (
           <div className="mb-12">
             <h2 className="mb-6 text-xl font-bold text-ew-dark">
-              {labels.destinationsFrom.replace("{origin}", selectedOrigin?.city || activeOrigin)}
+              {t("destinationsFrom", {
+                origin: selectedOrigin
+                  ? ((locale === "de" || locale === "de_AT") ? (DE_CITY_NAMES[selectedOrigin.iataCode] || selectedOrigin.city) : selectedOrigin.city)
+                  : activeOrigin,
+              })}
             </h2>
             <RouteGrid origin={activeOrigin} />
           </div>

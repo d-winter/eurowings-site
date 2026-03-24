@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import RouteCard from "./RouteCard";
 import type { FlightRoute } from "@/data/flights/types";
+import { DE_CITY_NAMES } from "@/data/flights/airports";
 
 interface RouteGridProps {
   origin: string;
@@ -35,6 +37,13 @@ const SEGMENT_ICONS: Record<string, string> = {
   adventure: "\u26f0\ufe0f",
 };
 
+const SEGMENT_KEYS: Record<string, string> = {
+  all: "allDestinations",
+  "city-trip": "cityTrips",
+  "beach-holiday": "beachHolidays",
+  adventure: "adventure",
+};
+
 export default function RouteGrid({ origin }: RouteGridProps) {
   const [routes, setRoutes] = useState<FlightRoute[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +51,8 @@ export default function RouteGrid({ origin }: RouteGridProps) {
   const [filter, setFilter] = useState<string>("all");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const locale = useLocale();
+  const t = useTranslations("explore");
 
   useEffect(() => {
     setLoading(true);
@@ -63,6 +74,13 @@ export default function RouteGrid({ origin }: RouteGridProps) {
   }, [origin]);
 
   const filtered = filter === "all" ? routes : routes.filter((r) => r.segment === filter);
+
+  function localizedCity(iataCode: string, englishCity: string): string {
+    if (locale === "de" || locale === "de_AT") {
+      return DE_CITY_NAMES[iataCode] || englishCity;
+    }
+    return englishCity;
+  }
 
   function handleRouteClick(route: FlightRoute) {
     const params = new URLSearchParams(searchParams.toString());
@@ -90,12 +108,6 @@ export default function RouteGrid({ origin }: RouteGridProps) {
   }
 
   const segments = ["all", "city-trip", "beach-holiday", "adventure"];
-  const segmentLabels: Record<string, string> = {
-    all: "All Destinations",
-    "city-trip": "City Trips",
-    "beach-holiday": "Beach Holidays",
-    adventure: "Adventure",
-  };
 
   return (
     <div>
@@ -115,7 +127,7 @@ export default function RouteGrid({ origin }: RouteGridProps) {
               }`}
             >
               {SEGMENT_ICONS[s] && <span className="text-xs">{SEGMENT_ICONS[s]}</span>}
-              {segmentLabels[s]}
+              {t(SEGMENT_KEYS[s] as "allDestinations" | "cityTrips" | "beachHolidays" | "adventure")}
               <span className={`ml-0.5 text-xs ${isActive ? "text-white/70" : "text-ew-grey/60"}`}>
                 {count}
               </span>
@@ -126,7 +138,7 @@ export default function RouteGrid({ origin }: RouteGridProps) {
 
       {/* Results count */}
       <p className="mb-4 text-sm text-ew-grey">
-        {filtered.length} destination{filtered.length !== 1 ? "s" : ""} found
+        {t("destinationsFound", { count: filtered.length })}
       </p>
 
       {/* Route cards grid */}
@@ -142,7 +154,7 @@ export default function RouteGrid({ origin }: RouteGridProps) {
             }}
           >
             <RouteCard
-              city={route.destination.city}
+              city={localizedCity(route.destination.iataCode, route.destination.city)}
               country={route.destination.country}
               iataCode={route.destination.iataCode}
               segment={route.segment}

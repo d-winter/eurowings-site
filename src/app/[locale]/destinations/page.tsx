@@ -107,15 +107,7 @@ export default async function DestinationsPage({ params, searchParams }: Props) 
           destinationCode={destinationCode}
           heroTitle={t("heroTitle")}
           heroSubtitle={t("heroSubtitle")}
-          labels={{
-            selectOrigin: te("selectOrigin"),
-            searchPlaceholder: te("searchPlaceholder"),
-            destinationsFrom: te("destinationsFrom", { origin: "{origin}" }),
-            backToSearch: te("backToSearch"),
-            featured: te("featured"),
-          }}
         >
-          {/* CMS destinations passed as children for the search/browse view */}
           {destinations.length > 0 && (
             <section className="mt-16">
               <h2 className="mb-6 text-2xl font-bold text-ew-dark">{te("featured")}</h2>

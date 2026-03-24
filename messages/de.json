@@ -70,7 +70,16 @@
     "searchPlaceholder": "Flughafen suchen (z.\u00a0B. Köln, Berlin)...",
     "destinationsFrom": "Reiseziele ab {origin}",
     "backToSearch": "\u2190 Zurück zu den Reisezielen",
-    "featured": "Beliebte Reiseziele"
+    "featured": "Beliebte Reiseziele",
+    "from": "ab",
+    "destinationsFound": "{count, plural, one {# Reiseziel} other {# Reiseziele}} gefunden",
+    "loading": "Reiseziele werden geladen...",
+    "allDestinations": "Alle Reiseziele",
+    "cityTrips": "Städtereisen",
+    "beachHolidays": "Strandurlaub",
+    "adventure": "Abenteuer",
+    "availableFlights": "Verfügbare Flüge",
+    "contentSections": "Weitere Informationen"
   },
   "faq": {
     "fallbackTitle": "Häufig gestellte Fragen",

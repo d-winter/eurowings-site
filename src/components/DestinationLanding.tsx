@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import type { DestinationLandingPageData, FederatedFlightOffer } from "@/lib/types";
 import { applyVariant } from "@/lib/variants";
 import ContentSection from "@/components/ContentSection";
@@ -17,6 +18,7 @@ export default function DestinationLanding({
   destinationCity,
   destinationCode,
 }: DestinationLandingProps) {
+  const t = useTranslations("explore");
   const resolved = applyVariant(page, page.variants as Array<Partial<typeof page>>);
 
   return (
@@ -62,7 +64,7 @@ export default function DestinationLanding({
         {/* Federated Flight Offers */}
         {resolved.flightOffers && resolved.flightOffers.length > 0 && (
           <section className="mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-ew-dark">Available Flights</h2>
+            <h2 className="mb-6 text-2xl font-bold text-ew-dark">{t("availableFlights")}</h2>
             <div className="grid gap-3 md:grid-cols-2">
               {resolved.flightOffers.map((offer: FederatedFlightOffer, idx: number) => (
                 <FederatedFlightCard key={`${offer.flightNumber}-${idx}`} offer={offer} />

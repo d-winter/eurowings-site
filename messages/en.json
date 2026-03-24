@@ -70,7 +70,16 @@
     "searchPlaceholder": "Search for an airport (e.g., Cologne, Berlin)...",
     "destinationsFrom": "Destinations from {origin}",
     "backToSearch": "\u2190 Back to destinations",
-    "featured": "Featured Destinations"
+    "featured": "Featured Destinations",
+    "from": "from",
+    "destinationsFound": "{count, plural, one {# destination} other {# destinations}} found",
+    "loading": "Loading destinations...",
+    "allDestinations": "All Destinations",
+    "cityTrips": "City Trips",
+    "beachHolidays": "Beach Holidays",
+    "adventure": "Adventure",
+    "availableFlights": "Available Flights",
+    "contentSections": "More Information"
   },
   "faq": {
     "fallbackTitle": "Frequently asked questions",
