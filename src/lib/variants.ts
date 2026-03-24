@@ -28,11 +28,17 @@ export function segmentNameToSlug(name: string): string {
 }
 
 /**
- * Find a segment ID by its slug (normalized name).
+ * Find a segment ID by slug (normalized name) or direct ID.
+ * Supports both `segment=beach-holiday` and `segment=cmn4nfi4sp00u07w1...`
+ * so Hygraph live preview can pass IDs directly.
  */
 export function findSegmentId(
   segments: Array<{ id: string; name: string }>,
-  slug: string
+  slugOrId: string
 ): string | undefined {
-  return segments.find((s) => segmentNameToSlug(s.name) === slug)?.id;
+  // Direct ID match
+  const byId = segments.find((s) => s.id === slugOrId);
+  if (byId) return byId.id;
+  // Slug match
+  return segments.find((s) => segmentNameToSlug(s.name) === slugOrId)?.id;
 }
