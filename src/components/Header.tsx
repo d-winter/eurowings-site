@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useCallback } from "react";
 import Image from "next/image";
+import { useRouter as useNextRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -10,13 +11,13 @@ export default function Header() {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const locale = useLocale();
+  const nextRouter = useNextRouter();
 
-  // Preserve search params when switching locale (read from window to avoid Suspense requirement)
-  const localeSwitchHref = useMemo(() => {
-    if (typeof window === "undefined") return pathname;
-    const qs = window.location.search;
-    return qs ? `${pathname}${qs}` : pathname;
-  }, [pathname]);
+  const switchLocale = useCallback((targetLocale: string) => {
+    const qs = typeof window !== "undefined" ? window.location.search : "";
+    const prefix = targetLocale === "en" ? "" : `/${targetLocale}`;
+    nextRouter.push(`${prefix}${pathname}${qs}`);
+  }, [pathname, nextRouter]);
 
   const nav = [
     { href: "/", key: "home" as const },
@@ -61,24 +62,22 @@ export default function Header() {
 
           <div className="hidden items-center gap-4 md:flex">
             <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-1 py-0.5 text-xs font-semibold">
-              <Link
-                href={localeSwitchHref}
-                locale="en"
+              <button
+                onClick={() => switchLocale("en")}
                 className={`rounded-full px-2.5 py-1 transition-colors ${
                   locale === "en" ? "bg-white text-ew-primary shadow-sm" : "text-ew-grey hover:text-ew-dark"
                 }`}
               >
                 EN
-              </Link>
-              <Link
-                href={localeSwitchHref}
-                locale="de"
+              </button>
+              <button
+                onClick={() => switchLocale("de")}
                 className={`rounded-full px-2.5 py-1 transition-colors ${
                   locale === "de" ? "bg-white text-ew-primary shadow-sm" : "text-ew-grey hover:text-ew-dark"
                 }`}
               >
                 DE
-              </Link>
+              </button>
             </div>
             <Link
               href="/"
@@ -119,22 +118,18 @@ export default function Header() {
       >
         <nav className="flex flex-col gap-1 p-4">
           <div className="mb-2 flex justify-center gap-2">
-            <Link
-              href={pathname}
-              locale="en"
-              className="rounded-full border px-4 py-1.5 text-sm font-semibold"
-              onClick={() => setMenuOpen(false)}
+            <button
+              className={`rounded-full border px-4 py-1.5 text-sm font-semibold ${locale === "en" ? "border-ew-primary text-ew-primary" : ""}`}
+              onClick={() => { switchLocale("en"); setMenuOpen(false); }}
             >
               EN
-            </Link>
-            <Link
-              href={pathname}
-              locale="de"
-              className="rounded-full border px-4 py-1.5 text-sm font-semibold"
-              onClick={() => setMenuOpen(false)}
+            </button>
+            <button
+              className={`rounded-full border px-4 py-1.5 text-sm font-semibold ${locale === "de" ? "border-ew-primary text-ew-primary" : ""}`}
+              onClick={() => { switchLocale("de"); setMenuOpen(false); }}
             >
               DE
-            </Link>
+            </button>
           </div>
           {nav.map((item) => {
             const isActive = item.href === "/"
