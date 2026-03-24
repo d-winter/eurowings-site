@@ -24,9 +24,10 @@ export default function DestinationLanding({
   const currentOrigin = searchParams.get("origin");
   const resolved = applyVariant(page, page.variants as Array<Partial<typeof page>>);
 
-  // For click-to-edit: use base entry ID — the preview SDK resolves variant
-  // fields through the base entry. Variant IDs are not recognized by the SDK.
-  const eid = page.id;
+  // For click-to-edit: use variant entry ID for variant-overridden fields,
+  // base entry ID for base-only fields (slug, seo)
+  const variant = page.variants?.[0];
+  const eid = variant?.id || page.id;
 
   return (
     <div>
