@@ -214,7 +214,7 @@ export const GET_DESTINATION_LANDING_PAGE = `
       contentSections { heading body { html } }
       seo { metaTitle metaDescription ogImage noIndex }
       cta { id label url variant openInNewTab }
-      variants(where: { segments_some: { id: $segmentId } }) {
+      variants(where: { segments_some: { id: $segmentId } }, locales: $locales) {
         title
         heroHeading
         heroSubheading
