@@ -3,7 +3,7 @@
  * Only overrides fields that are non-null/undefined in the variant.
  * Pattern from: ~/dev/work/hygraph-showcase/app/[locale]/blog/[slug]/page.tsx
  */
-export function applyVariant<T extends Record<string, unknown>>(
+export function applyVariant<T extends object>(
   base: T,
   variants?: Array<Partial<T>>
 ): T {
