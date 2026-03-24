@@ -24,7 +24,7 @@ const SEGMENT_COLORS: Record<string, string> = {
 
 const SEGMENT_LABELS: Record<string, string> = {
   "city-trip": "City Trip",
-  "beach-holiday": "Beach",
+  "beach-holiday": "Beach Holiday",
   "adventure": "Adventure",
 };
 
