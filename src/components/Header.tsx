@@ -3,19 +3,21 @@
 import { useState, useCallback } from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const t = useTranslations("nav");
   const pathname = usePathname();
   const locale = useLocale();
-  const router = useRouter();
 
+  /** Switch locale while preserving the full URL (pathname + search params). */
   const switchLocale = useCallback((targetLocale: "en" | "de") => {
-    const qs = typeof window !== "undefined" ? window.location.search : "";
-    router.push(`${pathname}${qs}`, { locale: targetLocale });
-  }, [pathname, router]);
+    if (typeof window === "undefined") return;
+    const prefix = targetLocale === "en" ? "" : `/${targetLocale}`;
+    // pathname from next-intl has no locale prefix; append current search params
+    window.location.assign(`${prefix}${pathname}${window.location.search}`);
+  }, [pathname]);
 
   const nav = [
     { href: "/", key: "home" as const },
