@@ -21,7 +21,7 @@ export default function HeroBanner({ hero, entryId, compact }: Props) {
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${bgUrl})` }}
           data-hygraph-entry-id={entryId}
-          data-hygraph-field-api-id="hero"
+          data-hygraph-field-api-id="backgroundImage"
           data-hygraph-component-chain={entryId ? JSON.stringify([{ fieldApiId: "hero" }]) : undefined}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-ew-dark/80 via-ew-dark/50 to-transparent" />

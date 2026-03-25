@@ -6,9 +6,13 @@ import type { SplitBannerContentBlock } from "@/lib/types";
 function BannerCta({
   cta,
   brandPanel,
+  entryId,
+  chain,
 }: {
   cta: NonNullable<SplitBannerContentBlock["cta"]>;
   brandPanel: boolean;
+  entryId?: string;
+  chain?: string;
 }) {
   const className = brandPanel
     ? `inline-flex w-fit items-center rounded-full px-8 py-3.5 text-center text-base font-bold transition-colors ${
@@ -30,10 +34,17 @@ function BannerCta({
               : "font-semibold text-ew-primary underline-offset-4 hover:underline"
       }`;
 
-  const attrs = {
-    "data-hygraph-entry-id": cta.id,
-    "data-hygraph-field-api-id": "label" as const,
-  };
+  // Use component-based attrs if entryId is provided, otherwise fall back to relation ID
+  const attrs = entryId
+    ? {
+        "data-hygraph-entry-id": entryId,
+        "data-hygraph-field-api-id": "ctaLabel" as const,
+        "data-hygraph-component-chain": chain,
+      }
+    : {
+        "data-hygraph-entry-id": cta.id,
+        "data-hygraph-field-api-id": "label" as const,
+      };
 
   if (/^https?:\/\//i.test(cta.url)) {
     return (
@@ -67,12 +78,17 @@ type Props = {
 };
 
 /**
- * Hygraph **ContentBlock** model: full-width split layout (image left/right + title + CTA),
- * similar to the “Fly flexibly, fly relaxed” strip under search on eurowings.com.
+ * Hygraph **SplitBanner** component / **ContentBlock** model:
+ * full-width split layout (image left/right + title + CTA).
  */
 export default function ContentBlockBanner({ block, embedded, entryId, componentField }: Props) {
-  // Use parent entry ID with component chain for embedded components, or block's own ID for relations
+  // For component-based rendering: use parent entryId + component chain
+  // For relation-based rendering: use block's own ID
   const eid = entryId || block.id;
+  const chain = entryId && componentField
+    ? JSON.stringify([{ fieldApiId: componentField, instanceId: block.id }])
+    : undefined;
+
   const imageOnLeft = block.imageSide !== "RIGHT";
   const brandPanel = block.panelStyle === "BRAND";
 
@@ -96,6 +112,7 @@ export default function ContentBlockBanner({ block, embedded, entryId, component
         className="relative aspect-[4/3] w-full lg:aspect-auto lg:w-1/2 lg:min-h-[24rem]"
         data-hygraph-entry-id={eid}
         data-hygraph-field-api-id="image"
+        data-hygraph-component-chain={chain}
       >
         {block.image?.url ? (
           <Image
@@ -111,18 +128,28 @@ export default function ContentBlockBanner({ block, embedded, entryId, component
         )}
       </div>
 
-      <div className={textColClass} data-hygraph-entry-id={eid} data-hygraph-field-api-id="panelStyle">
-        <h2 className={titleClass} data-hygraph-field-api-id="title">
+      <div className={textColClass}>
+        <h2
+          className={titleClass}
+          data-hygraph-entry-id={eid}
+          data-hygraph-field-api-id="title"
+          data-hygraph-component-chain={chain}
+        >
           {block.title}
         </h2>
         {block.subheading && (
-          <p className={subClass} data-hygraph-field-api-id="subheading">
+          <p
+            className={subClass}
+            data-hygraph-entry-id={eid}
+            data-hygraph-field-api-id="subheading"
+            data-hygraph-component-chain={chain}
+          >
             {block.subheading}
           </p>
         )}
         {block.cta && (
           <div className="mt-8">
-            <BannerCta cta={block.cta} brandPanel={brandPanel} />
+            <BannerCta cta={block.cta} brandPanel={brandPanel} entryId={entryId} chain={chain} />
           </div>
         )}
       </div>
