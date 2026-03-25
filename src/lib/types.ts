@@ -20,6 +20,29 @@ export interface HeroSection {
   cta?: CtaButton;
 }
 
+/** Hygraph HeroBanner component (embedded in Homepage) */
+export interface HeroBannerData {
+  heading: string;
+  subheading?: string;
+  backgroundImage?: Asset;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  ctaVariant?: "PRIMARY" | "SECONDARY" | "OUTLINE" | "TEXT";
+  ctaOpenInNewTab?: boolean;
+}
+
+/** Hygraph SplitBanner component (embedded in Homepage) */
+export interface SplitBannerData {
+  title: string;
+  subheading?: string;
+  imageSide?: "LEFT" | "RIGHT";
+  panelStyle?: "NEUTRAL" | "BRAND";
+  image?: Asset;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  ctaOpenInNewTab?: boolean;
+}
+
 /** Book & travel quick link (baggage, check-in, etc.) — Hygraph Service model */
 export interface Service {
   id: string;
@@ -127,13 +150,17 @@ export interface Homepage {
   title: string;
   slug?: string;
   seo?: SeoMetadata;
-  heroBanner?: HeroSection;
+  /** Embedded HeroBanner component (replaces HeroSection relation) */
+  hero?: HeroBannerData;
+  /** Embedded SplitBanner components (replaces ContentBlock/Service relations) */
+  splitBanners?: SplitBannerData[];
   promoCards?: Promotion[];
   contentSections?: ContentSectionData[];
   legalNotes?: Disclaimer[];
   featuredDestinations?: DestinationPage[];
+  /** @deprecated — kept for backward compat, use hero instead */
+  heroBanner?: HeroSection;
   services?: Service[];
-  /** Hygraph model ContentBlock — split image + text + CTA (e.g. under flight search) */
   bannerContentBlocks?: SplitBannerContentBlock[];
 }
 

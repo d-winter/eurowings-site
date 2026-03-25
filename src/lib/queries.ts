@@ -5,27 +5,28 @@ export const GET_HOMEPAGE = `
       title
       slug
       seo { metaTitle metaDescription ogImage noIndex }
-      heroBanner {
-        id
+      hero {
         heading
         subheading
         backgroundImage { url }
-        cta { id label url variant openInNewTab }
+        ctaLabel
+        ctaUrl
+        ctaVariant
+        ctaOpenInNewTab
+      }
+      splitBanners {
+        title
+        subheading
+        imageSide
+        panelStyle
+        image { url }
+        ctaLabel
+        ctaUrl
+        ctaOpenInNewTab
       }
       promoCards {
         id heading description priceFrom currency linkUrl linkLabel
         image { url }
-      }
-      belowSearchBlocks {
-        ... on Service {
-          __typename id title teaser iconKey linkUrl linkLabel sortOrder
-          image { url }
-        }
-        ... on ContentBlock {
-          __typename id title subheading imageSide panelStyle sortOrder
-          image { url }
-          cta { id label url variant openInNewTab }
-        }
       }
       contentSections { id heading body { html } imageUrl }
       legalNotes { id title identifier content { html } }

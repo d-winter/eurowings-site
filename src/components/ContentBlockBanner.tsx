@@ -60,14 +60,19 @@ type Props = {
   block: SplitBannerContentBlock;
   /** When inside landing page grid, parent adds column span */
   embedded?: boolean;
+  /** Homepage entry ID for component-based click-to-edit */
+  entryId?: string;
+  /** Component field apiId (e.g., "splitBanners") for click-to-edit chain */
+  componentField?: string;
 };
 
 /**
  * Hygraph **ContentBlock** model: full-width split layout (image left/right + title + CTA),
  * similar to the “Fly flexibly, fly relaxed” strip under search on eurowings.com.
  */
-export default function ContentBlockBanner({ block, embedded }: Props) {
-  const eid = block.id;
+export default function ContentBlockBanner({ block, embedded, entryId, componentField }: Props) {
+  // Use parent entry ID with component chain for embedded components, or block's own ID for relations
+  const eid = entryId || block.id;
   const imageOnLeft = block.imageSide !== "RIGHT";
   const brandPanel = block.panelStyle === "BRAND";
 
