@@ -1,7 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import type { FlightAirport } from "@/data/flights/types";
+import { ORIGIN_HUBS } from "@/data/flights/types";
+import { getAirport } from "@/data/flights/airports";
+import { DE_CITY_NAMES } from "@/data/flights/airports";
+
+const HUB_AIRPORTS: FlightAirport[] = ORIGIN_HUBS
+  .map((code) => getAirport(code))
+  .filter((a): a is FlightAirport => a != null);
 
 interface AirportSearchProps {
   onSelect: (airport: FlightAirport) => void;
@@ -10,28 +17,25 @@ interface AirportSearchProps {
 
 export default function AirportSearch({ onSelect, placeholder = "Search airports..." }: AirportSearchProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<FlightAirport[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<FlightAirport | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (query.length < 2 || selected) {
-      setResults([]);
-      return;
-    }
-
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(async () => {
-      const res = await fetch(`/api/flights/airports?query=${encodeURIComponent(query)}`);
-      const data: FlightAirport[] = await res.json();
-      setResults(data);
-      setIsOpen(data.length > 0);
-    }, 200);
-
-    return () => clearTimeout(debounceRef.current);
+  // Filter hubs locally — no API call needed
+  const results = useMemo(() => {
+    if (query.length < 1 || selected) return [];
+    const q = query.toLowerCase();
+    return HUB_AIRPORTS.filter((a) =>
+      a.iataCode.toLowerCase().includes(q) ||
+      a.name.toLowerCase().includes(q) ||
+      a.city.toLowerCase().includes(q) ||
+      (DE_CITY_NAMES[a.iataCode]?.toLowerCase().includes(q) ?? false)
+    );
   }, [query, selected]);
+
+  useEffect(() => {
+    setIsOpen(results.length > 0);
+  }, [results]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
