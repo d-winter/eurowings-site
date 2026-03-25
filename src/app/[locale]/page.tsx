@@ -63,7 +63,11 @@ export default async function HomePage({ params }: Props) {
       <FlightSearchPanel />
 
       {page?.splitBanners && page.splitBanners.length > 0 && (
-        <div className="space-y-0">
+        <div
+          className="space-y-0"
+          data-hygraph-entry-id={page.id}
+          data-hygraph-field-api-id="splitBanners"
+        >
           {page.splitBanners.map((banner, idx) => (
             <ContentBlockBanner
               key={banner.id || idx}
@@ -115,7 +119,11 @@ export default async function HomePage({ params }: Props) {
 
       {page?.contentSections && page.contentSections.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="space-y-6">
+          <div
+            className="space-y-6"
+            data-hygraph-entry-id={page.id}
+            data-hygraph-field-api-id="contentSections"
+          >
             {page.contentSections.map((section, idx) => (
               <ContentSection key={section.id || idx} section={section} entryId={page.id} />
             ))}
