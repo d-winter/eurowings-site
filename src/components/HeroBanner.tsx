@@ -10,6 +10,9 @@ interface Props {
 export default function HeroBanner({ hero, entryId, compact }: Props) {
   const bgUrl = hero.backgroundImage?.url;
   const height = compact ? "h-72 md:h-80" : "h-[28rem] md:h-[34rem]";
+  const chain = entryId && hero.id
+    ? JSON.stringify([{ fieldApiId: "hero", instanceId: hero.id }])
+    : undefined;
 
   const ctaClass =
     "mt-8 inline-block rounded-full bg-ew-accent px-8 py-3.5 text-base font-bold text-ew-dark shadow-lg transition-transform hover:scale-105";
@@ -22,7 +25,7 @@ export default function HeroBanner({ hero, entryId, compact }: Props) {
           style={{ backgroundImage: `url(${bgUrl})` }}
           data-hygraph-entry-id={entryId}
           data-hygraph-field-api-id="backgroundImage"
-          data-hygraph-component-chain={entryId ? JSON.stringify([{ fieldApiId: "hero" }]) : undefined}
+          data-hygraph-component-chain={chain}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-ew-dark/80 via-ew-dark/50 to-transparent" />
         </div>
@@ -39,7 +42,7 @@ export default function HeroBanner({ hero, entryId, compact }: Props) {
             }`}
             data-hygraph-entry-id={entryId}
             data-hygraph-field-api-id="heading"
-            data-hygraph-component-chain={entryId ? JSON.stringify([{ fieldApiId: "hero" }]) : undefined}
+            data-hygraph-component-chain={chain}
           >
             {hero.heading}
           </h1>
@@ -48,7 +51,7 @@ export default function HeroBanner({ hero, entryId, compact }: Props) {
               className="mt-4 text-lg text-white/80 md:text-xl"
               data-hygraph-entry-id={entryId}
               data-hygraph-field-api-id="subheading"
-              data-hygraph-component-chain={entryId ? JSON.stringify([{ fieldApiId: "hero" }]) : undefined}
+              data-hygraph-component-chain={chain}
             >
               {hero.subheading}
             </p>
@@ -62,7 +65,7 @@ export default function HeroBanner({ hero, entryId, compact }: Props) {
                 className={ctaClass}
                 data-hygraph-entry-id={entryId}
                 data-hygraph-field-api-id="ctaLabel"
-                data-hygraph-component-chain={entryId ? JSON.stringify([{ fieldApiId: "hero" }]) : undefined}
+                data-hygraph-component-chain={chain}
               >
                 {hero.ctaLabel}
               </a>
@@ -72,7 +75,7 @@ export default function HeroBanner({ hero, entryId, compact }: Props) {
                 className={ctaClass}
                 data-hygraph-entry-id={entryId}
                 data-hygraph-field-api-id="ctaLabel"
-                data-hygraph-component-chain={entryId ? JSON.stringify([{ fieldApiId: "hero" }]) : undefined}
+                data-hygraph-component-chain={chain}
               >
                 {hero.ctaLabel}
               </Link>

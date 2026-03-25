@@ -66,9 +66,9 @@ export default async function HomePage({ params }: Props) {
         <div className="space-y-0">
           {page.splitBanners.map((banner, idx) => (
             <ContentBlockBanner
-              key={idx}
+              key={banner.id || idx}
               block={{
-                id: `split-banner-${idx}`,
+                id: banner.id || `split-banner-${idx}`,
                 title: banner.title,
                 subheading: banner.subheading,
                 imageSide: banner.imageSide,

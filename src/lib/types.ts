@@ -22,6 +22,7 @@ export interface HeroSection {
 
 /** Hygraph HeroBanner component (embedded in Homepage) */
 export interface HeroBannerData {
+  id?: string;
   heading: string;
   subheading?: string;
   backgroundImage?: Asset;
@@ -33,6 +34,7 @@ export interface HeroBannerData {
 
 /** Hygraph SplitBanner component (embedded in Homepage) */
 export interface SplitBannerData {
+  id?: string;
   title: string;
   subheading?: string;
   imageSide?: "LEFT" | "RIGHT";

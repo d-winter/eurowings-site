@@ -6,6 +6,7 @@ export const GET_HOMEPAGE = `
       slug
       seo { metaTitle metaDescription ogImage noIndex }
       hero {
+        id
         heading
         subheading
         backgroundImage { url }
@@ -15,6 +16,7 @@ export const GET_HOMEPAGE = `
         ctaOpenInNewTab
       }
       splitBanners {
+        id
         title
         subheading
         imageSide
